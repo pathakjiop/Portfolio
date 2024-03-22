@@ -45,7 +45,7 @@ export default function PortfolioPage() {
           <div className="flex justify-center">
             <ul className="flex justify-center gap-[47px] p-[17px] sm:flex-wrap">
               <li>
-                <a href="#" className="mt-1 mb-0.5">
+                <a href="#" className="mt-0 mb-0.5">
                   <Text size="xs" as="p">
                     Home
                   </Text>
