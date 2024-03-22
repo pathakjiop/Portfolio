@@ -33,10 +33,10 @@ Description: The Cloth Shop Management System is a comprehensive application des
 
 ## Contact
 
-- LinkedIn: [Your LinkedIn Profile](link_to_linkedin_profile)
+- [LinkedIn Profile](https://linkedin.com/in/pathak-ji-op/)
 - Email: your.email@example.com
-- Website: [Your Personal Website](link_to_personal_website)
-- Twitter: [Your Twitter Profile](link_to_twitter_profile)
+-[Portfolio](https://portfolio-beta-lemon-63.vercel.app/)
+- [Twitter Profile](https://x.com/atharvpathak248)
 
 ## About Me
 
