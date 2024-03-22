@@ -1,0 +1,46 @@
+module.exports = {
+  mode: "jit",
+  content: ["./src/**/**/*.{js,ts,jsx,tsx,html,mdx}", "./src/**/*.{js,ts,jsx,tsx,html,mdx}"],
+  darkMode: "class",
+  theme: {
+    screens: { md: { max: "1050px" }, sm: { max: "550px" } },
+    extend: {
+      colors: {
+        gray: {
+          600: "#6e7681",
+          800: "#424242",
+          900: "#0d1117",
+          "900_01": "#161b22",
+          "700_aa": "#7a6363aa",
+          "800_01": "#3d3f41",
+          "600_aa": "#7a6464aa",
+        },
+        light_blue: { "50_2b": "#cfe9fe2b" },
+        blue_gray: { 400: "#8b949e", 900: "#30363d" },
+        white: { A700: "#ffffff" },
+        deep_orange: { 200: "#ffa28b" },
+        indigo: { A100: "#939aff" },
+        green: { 300: "#7ee787" },
+        orange: { 200: "#ffb67c" },
+        blue: { "50_7f": "#ebf5ff7f" },
+        blue_50_01: "#ebf5ff",
+      },
+      boxShadow: {
+        xs: "0px 4px  4px 0px #0000003f",
+        sm: "2px 4px  4px 0px #0000003f",
+        md: "0px 2px  2px 0px #0000000f",
+      },
+      fontFamily: { opensans: "Open Sans" },
+      backgroundImage: {
+        gradient: "linear-gradient(86deg, #b384f9,#7ee787)",
+        gradient1: "linear-gradient(180deg, #0d1117,#7ee787,#fff7ceea,#ffd29ef6,#ffb67c)",
+        gradient2: "linear-gradient(180deg, #0d1117,#797ef9,#abb4ff)",
+        gradient3: "linear-gradient(180deg, #abb4ff,#797ef9,#0d1117)",
+        gradient4: "linear-gradient(180deg, #0d1117,#ea6045,#ea6045,#0d1117)",
+        gradient5: "linear-gradient(180deg, #ffd6cc,#ec6547,#ec6547,#0d1117)",
+        gradient6: "linear-gradient(180deg, #56d364,#2ea043,#0d1117)",
+      },
+    },
+  },
+  plugins: [require("@tailwindcss/forms")],
+};
