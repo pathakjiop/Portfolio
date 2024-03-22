@@ -201,7 +201,7 @@ export default function PortfolioPage() {
                           <div className="flex self-stretch justify-end p-7 sm:p-5 border-blue_gray-900 border border-solid bg-gray-900_01 shadow-md rounded-lg">
                             <Text
                               as="p"
-                              className="w-[91%] mb-[81px] mr-[72px] md:mr-0"
+                              className="w-[91%] mb-[40px] mr-[72px] md:mr-0"
                             >
                               <>
                                 My journey in the world of programming began in
@@ -226,7 +226,7 @@ export default function PortfolioPage() {
                               </>
                             </Text>
                           </div>
-                          <div className="flex justify-end w-[68%] md:w-full mt-[-141px] mr-[53px] pl-14 pr-[67px] py-[67px] md:mr-0 md:p-5 border-gray-600 border-t border-l border-solid bg-gray-900_01 shadow-xs rounded-[15px]">
+                          <div className="flex justify-end w-[68%] md:w-full mt-[-40px] mr-[53px] pl-14 pr-[67px] py-[67px] md:mr-0 md:p-5 border-gray-600 border-t border-l border-solid bg-gray-900_01 shadow-xs rounded-[15px]">
                             <Text as="p" className="w-[97%] mt-[7px] mb-[9px]">
                               <>
                                 Backend: Python for scalable systems and MySQL
