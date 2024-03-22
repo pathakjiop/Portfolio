@@ -17,9 +17,19 @@ Description: The Cloth Shop Management System is a comprehensive application des
 
 ## Skills
 
-- Programming Languages: List of programming languages you are proficient in.
-- Technologies: List of technologies you have experience with.
-- Tools: List of tools you commonly use.
+- Python (Backend)
+- ReactJS (Frontend)
+- MySQL
+- Java
+- HTML
+- CSS
+- JavaScript
+- REST APIs
+- Node.js
+- Bootstrap
+- C
+- C++
+- Vercel (Hosting)
 
 ## Contact
 
