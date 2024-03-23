@@ -15,6 +15,7 @@ Welcome to my GitHub portfolio! Here you'll find a collection of projects and re
 - Python (Backend)
 - ReactJS (Frontend)
 - MySQL
+- Vercel (Hosting)
 - Java
 - HTML
 - CSS
@@ -24,7 +25,6 @@ Welcome to my GitHub portfolio! Here you'll find a collection of projects and re
 - Bootstrap
 - C
 - C++
-- Vercel (Hosting)
 
 ## Contact
 
