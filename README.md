@@ -5,15 +5,10 @@ Welcome to my GitHub portfolio! Here you'll find a collection of projects and re
 ## Projects
 
 ### [Ayurvedic Information System](https://github.com/pathakjiop/Ayurvedic-Information-System)
-Description: The Ayurvedic Information System is a comprehensive platform designed to provide users with detailed information about Ayurvedic practices, treatments, herbs, and wellness advice. This system is built using a ReactJS frontend and a Python backend to deliver a seamless and interactive user experience.
-
 
 ### [Healthy Lifestyle](https://github.com/pathakjiop/Healthy-Lifestyle)
-Description: The Healthy-Lifestyle project is designed to promote wellness and encourage individuals to achieve and maintain an optimal BMI (Body Mass Index). By inputting basic information (name, age, height, weight, gender), users can receive personalized BMI calculations through the Gemini API. Moreover, the project guides users on how to attain their ideal BMI through a comprehensive, 25-question questionnaire, offering tailored advice and actionable steps.
-
 
 ### [Clothshop Mangament System](https://github.com/pathakjiop/Cloth-Shop-Mangament-System)
-Description: The Cloth Shop Management System is a comprehensive application designed to facilitate the management of cloth shop operations, including inventory management, sales tracking, and customer management. This system is built using Python, with MySQL serving as the backend database and Tkinter for the graphical user interface (GUI), making it both efficient and user-friendly.
 
 ## Skills
 
