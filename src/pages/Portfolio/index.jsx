@@ -161,7 +161,7 @@ export default function PortfolioPage() {
                         <Img
                           src="images/img_icon.svg"
                           alt="icon_one"
-                          className="h-[20px] w-[20px] mt-5"
+                          className="h-20px w-20px mt-5 mr-20]"
                         />
                         <Text
                           size="lg"
@@ -553,7 +553,7 @@ export default function PortfolioPage() {
                     <Img
                       src="images/img_icon_indigo_a100.svg"
                       alt="icon_three"
-                      className="h-[24px] w-full md:w-[24px] md:h-auto"
+                      className="h-[24px w-full md:w-[24px] md:h-auto"
                     />
                     <div className="h-[275px] w-[3px] bg-gradient3 rounded-[1px]" />
                   </div>
