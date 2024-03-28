@@ -1,5 +1,8 @@
 # Atharv Pathak's Portfolio
 
+![Home](https://github.com/pathakjiop/Portfolio/assets/149372274/33048ae0-ac03-4bc1-a255-97c29ade6e29)
+
+
 Welcome to my GitHub portfolio! Here you'll find a collection of projects and repositories showcasing my skills and interests. Feel free to explore, contribute, and reach out to collaborate on exciting projects!
 
 ## Projects
@@ -38,6 +41,7 @@ Welcome to my GitHub portfolio! Here you'll find a collection of projects and re
 Come on over to my website for some fun tech stuff:
 
 [Visit My Website](https://portfolio-beta-lemon-63.vercel.app/)
+
 
 See you there! Click the link above to visit. Enjoy! 🌟
 
