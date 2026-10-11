@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build output
+dist/
+build/
+.vite/
+.vercel/output/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+
+# Local configuration
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing and coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Local development
+*.local
+AGENTS.md
+ME.md
+# Package manager
+# Keep package-lock.json for reproducible installs
+
+# Generated or local project files
+
+# Optional: ignore recordings if they contain private data
+# screenrecord/
+
+# Optional: ignore local models and assets if they are large
+# model/
+# ass/
+# public/media/
+
+# Vercel
+.vercel/
+
+# OS files
+Desktop.ini

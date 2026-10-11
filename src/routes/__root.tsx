@@ -1,0 +1,55 @@
+import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from "@tanstack/react-router";
+import { AuthProvider } from "@/lib/auth/provider";
+import { PreviewHostBridge } from "@/components/preview-host-bridge";
+import { SiteFrame } from "@/components/chrome";
+import appCss from "../styles.css?url";
+
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { Toaster } from "react-hot-toast";
+import { AnimatePresence, motion } from "framer-motion";
+
+
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Atharv Pathak" },
+      {
+        name: "description",
+        content: "Atharv Pathak — Python Developer & Full-Stack Web Developer.",
+      },
+      { name: "theme-color", content: "#dad2d8" },
+    ],
+    links: [
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "stylesheet", href: appCss },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap",
+      },
+      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
+    ],
+  }),
+  component: () => (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <PreviewHostBridge />
+        <AuthProvider>
+          <SmoothScroll>
+            <SiteFrame>
+              <Outlet />
+            </SiteFrame>
+          </SmoothScroll>
+        </AuthProvider>
+        <Toaster position="bottom-right" />
+        <Scripts />
+      </body>
+    </html>
+  ),
+});

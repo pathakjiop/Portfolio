@@ -1,0 +1,363 @@
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState, type ReactNode } from "react";
+import { cities, socials } from "@/data/content";
+import { media } from "@/data/media";
+
+type Theme = "light" | "dark";
+
+import gsap from "gsap";
+
+function useTheme() {
+  const [theme, setTheme] = useState<Theme>("light");
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("atharv-theme");
+    if (stored === "dark" || stored === "light") {
+      setTheme(stored);
+      document.documentElement.classList.toggle("dark", stored === "dark");
+    }
+  }, []);
+
+  const toggle = () => {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    const nextBg = nextTheme === "dark" ? "#143642" : "#dad2d8";
+
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100vw";
+    overlay.style.height = "100vh";
+    overlay.style.zIndex = "9999";
+    overlay.style.backgroundColor = nextBg;
+    overlay.style.clipPath = "polygon(0 0, 0 0, -20% 100%, -20% 100%)";
+    document.body.appendChild(overlay);
+
+    gsap.to(overlay, {
+      clipPath: "polygon(0 0, 120% 0, 100% 100%, -20% 100%)",
+      duration: 0.6,
+      ease: "power2.inOut",
+      onComplete: () => {
+        setTheme(nextTheme);
+        document.documentElement.classList.toggle("dark", nextTheme === "dark");
+        window.localStorage.setItem("atharv-theme", nextTheme);
+
+        gsap.to(overlay, {
+          opacity: 0,
+          duration: 0.3,
+          onComplete: () => overlay.remove()
+        });
+      }
+    });
+  };
+
+  return { theme, toggle };
+}
+
+function useNow(active: boolean) {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    if (!active) return;
+    setNow(new Date());
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, [active]);
+  return now;
+}
+
+function formatClock(date: Date, tz: string) {
+  const time = new Intl.DateTimeFormat("en-GB", {
+    timeZone: tz,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).format(date);
+  return { time };
+}
+
+function ClockMarquee() {
+  const now = useNow(true);
+  const loop = [...cities, ...cities];
+  return (
+    <div className="group relative h-full overflow-hidden">
+      <div className="marquee-track flex h-full w-max items-center">
+        {loop.map((city, index) => {
+          const clock = now ? formatClock(now, city.tz) : { time: "--:--:--" };
+          return (
+            <span key={`${city.city}-${index}`} className="flex shrink-0 items-center">
+              <span
+                className={
+                  city.home
+                    ? "kicker bg-primary px-3 py-1 font-bold text-paper uppercase"
+                    : "kicker px-3 opacity-70 uppercase"
+                }
+              >
+                <span className="tabular-nums">
+                  {city.city} <span className="mx-2">{clock.time}</span> <span className="opacity-70">{city.label}</span>
+                </span>
+              </span>
+              <span className="opacity-40 mx-4">/</span>
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function Roll({ children }: { children: string }) {
+  return (
+    <span className="roll">
+      <span>{children}</span>
+      <span>{children}</span>
+    </span>
+  );
+}
+
+const nav = [
+  { to: "/about", label: "About" },
+  { to: "/works", label: "Works" },
+  { to: "/contact", label: "Contact" },
+] as const;
+
+export function SiteFrame({ children }: { children: ReactNode }) {
+  const { theme, toggle } = useTheme();
+  const [menu, setMenu] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    setMenu(false);
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = menu ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menu]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenu(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <>
+      <p className="sr-only">
+        Atharv Pathak is a Python developer, full-stack web developer, and IT engineering student based in India.
+      </p>
+      <div className="pointer-events-none fixed inset-0 -z-10 grid grid-cols-4 md:grid-cols-12" aria-hidden>
+        {Array.from({ length: 12 }, (_, i) => (
+          <div
+            key={i}
+            className={`h-full border-l border-primary/25 ${i === 0 ? "border-transparent" : ""} ${i > 3 ? "hidden md:block" : ""}`}
+          />
+        ))}
+      </div>
+
+      <header className="site-header fixed inset-x-0 top-0 z-30 grid h-14 grid-cols-4 border-b border-primary/40 bg-paper md:h-16 md:grid-cols-12">
+        <Link
+          to="/"
+          aria-label="Atharv Pathak home"
+          className="col-span-2 flex items-center border-r border-primary/40 px-4 md:col-span-3"
+        >
+          <span className="wordmark" />
+        </Link>
+        <div className="hidden border-r border-primary/40 md:col-span-6 md:block">
+          <ClockMarquee />
+        </div>
+        <div className="col-span-2 flex md:col-span-3">
+          <button
+            type="button"
+            onClick={toggle}
+            className="group flex flex-1 items-center justify-end gap-2.5 px-4"
+            aria-label={theme === "light" ? "Switch to dark" : "Switch to light"}
+          >
+            <span className="kicker">
+              <Roll>{theme === "light" ? "Light" : "Dark"}</Roll>
+            </span>
+            <span className="block h-3 w-3 border border-current" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setMenu((open) => !open)}
+            className="flex w-14 items-center justify-center border-l border-primary/40 md:w-16"
+            aria-expanded={menu}
+            aria-label={menu ? "Close menu" : "Open menu"}
+          >
+            <span className="flex w-5 flex-col gap-1.5">
+              <span className={`h-px w-full bg-current transition ${menu ? "translate-y-[3.5px] rotate-45" : ""}`} />
+              <span className={`h-px w-full bg-current transition ${menu ? "-translate-y-[3.5px] -rotate-45" : ""}`} />
+            </span>
+          </button>
+        </div>
+      </header>
+
+      <div 
+        className={`fixed inset-0 z-40 bg-transparent transition-opacity duration-[600ms] ${menu ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} 
+        onClick={() => setMenu(false)} 
+        aria-hidden 
+      />
+      <div 
+        className={`fixed inset-y-0 right-0 z-50 w-[85vw] sm:w-1/2 md:w-4/12 bg-primary text-paper border-l border-paper/20 flex flex-col shadow-2xl transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${menu ? "translate-x-0" : "translate-x-full"}`}
+      >
+        {/* Close button inside sidebar */}
+        <button 
+          className="absolute top-0 right-0 h-14 md:h-16 w-14 md:w-16 border-b border-l border-paper/20 flex items-center justify-center hover:bg-paper/10 transition-colors" 
+          onClick={() => setMenu(false)}
+          aria-label="Close menu"
+        >
+          <span className="flex w-5 flex-col gap-1.5 relative">
+            <span className="h-[1.5px] w-full bg-current absolute top-1/2 -translate-y-1/2 rotate-45" />
+            <span className="h-[1.5px] w-full bg-current absolute top-1/2 -translate-y-1/2 -rotate-45" />
+          </span>
+        </button>
+        
+        <nav className="flex flex-col mt-14 md:mt-16">
+          <div className="border-t border-paper/20" />
+          {nav.map((item, index) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="group relative border-b border-paper/20 px-6 py-6 md:px-8 md:py-8 hover:bg-paper/10 transition-colors"
+              onClick={() => setMenu(false)}
+            >
+              <div className="flex items-center gap-4">
+                <span className="kicker w-4 md:w-6 opacity-80">0{index + 1}</span>
+                <span className="block lowercase tracking-tight font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl overflow-hidden text-ellipsis">
+                  <Roll>{item.label.toLowerCase()}</Roll>
+                </span>
+              </div>
+            </Link>
+          ))}
+        </nav>
+        
+        <div className="mt-auto px-6 py-8 md:px-8 md:py-10 flex flex-col gap-4">
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
+            {socials.map((item) => (
+              <a key={item.label} href={item.href} target="_blank" rel="noreferrer" className="group kicker uppercase opacity-90 hover:opacity-100 transition-opacity">
+                <Roll>{item.label}</Roll>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="pt-14 md:pt-16">{children}</div>
+      <Footer />
+    </>
+  );
+}
+
+export function ShibuyaBlock() {
+  return (
+    <div className="relative h-80 w-full overflow-hidden border-b border-paper/30 md:h-[450px]">
+      <video
+        src="/media/sea.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+}
+
+
+export function Footer() {
+  return (
+    <footer className="bg-primary text-paper h-full w-full">
+      <ShibuyaBlock />
+      <nav className="grid border-t border-paper/30 md:grid-cols-3 px-4 md:px-8">
+        {nav.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className="group flex items-center justify-center border-b border-paper/30 py-12 md:border-b-0 md:border-r md:py-16 md:last:border-r-0 transition-colors hover:bg-paper hover:text-primary"
+          >
+            <span className="text-base md:text-lg tracking-[0.2em] uppercase font-medium">
+              <Roll>{item.label}</Roll>
+            </span>
+          </Link>
+        ))}
+      </nav>
+      <div className="grid border-t border-paper/30 md:grid-cols-2 px-4 md:px-8">
+        <div className="border-b border-paper/30 py-6 md:border-r md:border-b-0 md:py-8 pr-6 md:pr-8">
+          <p className="kicker opacity-70">Elsewhere</p>
+          <ul className="mt-8 space-y-3">
+            {socials.map((item) => (
+              <li key={item.label}>
+                <a href={item.href} target="_blank" rel="noreferrer" className="group kicker inline-flex gap-3">
+                  <Roll>{item.label}</Roll>
+                  <span aria-hidden>→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex min-h-48 flex-col justify-between py-6 md:py-8 pl-0 md:pl-8">
+          <p className="kicker opacity-70">Colophon</p>
+          <p className="kicker mt-10 opacity-80">© 2026 Atharv Pathak. All rights reserved.</p>
+        </div>
+      </div>
+      <div className="overflow-hidden border-t border-paper/30 pt-4 px-4 md:px-8">
+        <div className="wordmark-xl" role="img" aria-label="Atharv." />
+      </div>
+    </footer>
+  );
+}
+
+import toast from "react-hot-toast";
+
+export function ChatCta() {
+  return (
+    <section className="flex min-h-[calc(100svh-3.5rem)] w-full flex-col border-t border-primary/50 bg-paper text-primary md:min-h-[calc(100svh-4rem)]">
+      <div className="grid flex-1 grid-cols-4 md:grid-cols-12">
+        <div className="col-span-4 flex flex-col border-x border-primary/50 md:col-span-10 md:col-start-2">
+          {/* heading block */}
+          <div className="flex min-h-[30svh] flex-col justify-end px-5 pb-6 pt-5">
+            <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
+              Want to
+            </span>
+            <h2 className="text-[70px] font-extrabold leading-[0.85] tracking-[-0.06em] text-primary lg:text-[96px]">
+              chat?
+            </h2>
+          </div>
+
+          {/* text + image split */}
+          <div className="grid flex-1 border-t border-primary/50 md:grid-cols-[2fr_3fr]">
+            <div className="flex flex-col justify-start border-primary/50 px-5 pb-8 pt-12 md:border-r md:pt-[100px]">
+              <p className="mb-8 text-lg font-medium md:text-xl">
+                Got a project in mind? I'd love to hear about it.
+              </p>
+              <div>
+                <Link
+                  to="/contact"
+                  className="inline-block border border-primary px-5 py-3 text-xl font-medium uppercase tracking-wider transition-colors hover:bg-primary hover:text-paper"
+                  onClick={() => toast.success("Redirecting to Contact page!", { icon: "🚀" })}
+                >
+                  <Roll>Contact me</Roll>
+                </Link>
+              </div>
+            </div>
+
+            {/* image fills the whole cell: full width + full height */}
+            <div className="relative min-h-[320px] md:min-h-0">
+              <img
+                src="/media/wall.jpg"
+                alt="Chat"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
