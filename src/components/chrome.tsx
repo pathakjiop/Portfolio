@@ -264,11 +264,11 @@ export function SiteFrame({ children }: { children: ReactNode }) {
 
 export function ShibuyaBlock() {
   return (
-    <div className="relative h-60 w-full overflow-hidden border-b border-paper/30 md:h-80">
+    <div className="footer-band-wrapper relative h-60 w-full overflow-hidden border-b border-paper/30 md:h-[35vh]">
       <img
         src="/media/still-08.webp"
-        alt="Shibuya pedestrian crossing"
-        className="h-full w-full object-cover object-center"
+        alt="Visual strip"
+        className="footer-band-img h-[125%] w-full object-cover object-center will-change-transform -translate-y-[10%]"
       />
     </div>
   );
@@ -277,7 +277,7 @@ export function ShibuyaBlock() {
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-paper h-full w-full">
+    <footer className="footer-root bg-primary text-paper h-full w-full">
       <ShibuyaBlock />
       <nav className="grid border-t border-paper/30 md:grid-cols-3 px-4 md:px-8">
         {nav.map((item) => (
@@ -311,9 +311,16 @@ export function Footer() {
           <p className="kicker mt-10 opacity-80">© 2026 Atharv Pathak. All rights reserved.</p>
         </div>
       </div>
-      <div className="overflow-hidden border-t border-paper/30 pt-4 px-4 md:px-8">
-        <div className="wordmark-xl" role="img" aria-label="Namaste.">
-          Namaste.
+      <div className="footer-wordmark-container overflow-hidden border-t border-paper/30 pt-4 px-4 md:px-8">
+        <div className="wordmark-xl footer-wordmark inline-block w-full overflow-hidden" role="img" aria-label="Namaste.">
+          {"Namaste.".split("").map((char, idx) => (
+            <span
+              key={idx}
+              className="footer-wordmark-char inline-block will-change-transform"
+            >
+              {char}
+            </span>
+          ))}
         </div>
       </div>
     </footer>
