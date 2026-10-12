@@ -81,7 +81,7 @@ function QuoteSlideshow({
 const INTRO_ASSETS = ["/media/pink.webp"];
 
 function Home() {
-  const [index, setIndex] = useState(2);
+  const [index, setIndex] = useState(0);
   // `intro` gates the hero's own entrance (text, roles, monogram); `showLoader` mounts the loader.
   // Both start true on a fresh page load and false on client-side navigation back to "/".
   const [intro, setIntro] = useState(() => !hasIntroPlayed());
@@ -297,31 +297,49 @@ function Home() {
                     key={item.slug}
                     type="button"
                     onClick={() => setIndex(i)}
-                    className="relative w-[150px] lg:w-full aspect-square lg:aspect-auto lg:flex-1 shrink-0 border-r lg:border-r-0 lg:border-b border-primary/50 lg:last:border-b-0 cursor-pointer overflow-hidden group"
+                    className={`relative w-[150px] lg:w-full aspect-square lg:aspect-auto lg:flex-1 shrink-0 border-r lg:border-r-0 lg:border-b border-primary/50 lg:last:border-b-0 cursor-pointer overflow-hidden group transition-all ${
+                      i === index ? "ring-2 ring-primary ring-inset" : ""
+                    }`}
                     aria-label={item.title}
                   >
-                    <img src={item.cover} alt="" className="absolute inset-0 w-full h-full object-cover" />
-                    <div className={`absolute inset-0 bg-paper transition-opacity duration-300 ${i === index ? 'opacity-0' : 'opacity-70 group-hover:opacity-40 grayscale'}`} />
+                    <img src={item.cover} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className={`absolute inset-0 bg-paper transition-opacity duration-300 ${i === index ? 'opacity-0' : 'opacity-75 group-hover:opacity-40 grayscale'}`} />
+                    <div className="absolute bottom-1.5 left-2 z-10 text-[9px] font-mono uppercase tracking-wider bg-paper/95 text-primary px-1.5 py-0.5 rounded shadow-xs opacity-90 backdrop-blur-xs">
+                      {item.shortTitle}
+                    </div>
                   </button>
                 ))}
               </div>
 
               {/* Feature Card */}
-              <div className="w-full lg:w-[757px] flex flex-col h-[500px] lg:h-auto">
+              <div className="w-full lg:w-[757px] flex flex-col h-[520px] lg:h-auto">
                 {/* Top Panel */}
-                <div className="bg-primary text-paper p-[30px] lg:p-[40px_35px] flex flex-col justify-between">
-                  <div className="flex justify-between items-center pb-[20px] lg:pb-[25px]">
-                    <h3 className="text-[28px] lg:text-[40px] font-bold leading-none m-0">
-                      {work.title}
-                    </h3>
-                    <Link to="/works/$slug" params={{ slug: work.slug }} className="text-[12px] lg:text-[14px] tracking-[0.1em] font-medium uppercase hover:opacity-80 transition-opacity whitespace-nowrap ml-4">
-                      VIEW PROJECT &gt;
-                    </Link>
+                <div className="bg-primary text-paper p-[24px_24px_18px_24px] lg:p-[32px_36px_22px_36px] flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="inline-block text-[9px] lg:text-[10px] tracking-[0.2em] font-bold uppercase border border-paper/40 px-2.5 py-0.5 rounded-full opacity-90">
+                        {work.statusBadge}
+                      </span>
+                      <span className="text-[10px] lg:text-[11px] font-mono tracking-widest opacity-75">
+                        0{index + 1} / 0{selected.length}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-baseline gap-4 pb-1">
+                      <h3 className="text-[24px] lg:text-[34px] font-bold leading-tight m-0 tracking-tight">
+                        {work.shortTitle}
+                      </h3>
+                      <Link to="/works/$slug" params={{ slug: work.slug }} className="text-[11px] lg:text-[13px] tracking-[0.14em] font-semibold uppercase hover:underline decoration-2 underline-offset-4 whitespace-nowrap text-paper">
+                        CASE STUDY &gt;
+                      </Link>
+                    </div>
+                    <p className="text-paper/85 text-[12px] lg:text-[14px] line-clamp-1 mt-1 font-light">
+                      {work.subtitle}
+                    </p>
                   </div>
-                  <hr className="border-t border-paper/30 w-full m-0" />
-                  <div className="flex justify-between items-center pt-[20px] lg:pt-[25px] text-[9px] lg:text-[11px] uppercase tracking-[0.2em] opacity-80">
-                    <span className="truncate pr-4">{work.tags.join(" / ")}</span>
-                    <span className="whitespace-nowrap">2023 // 2024</span>
+                  <hr className="border-t border-paper/20 w-full my-3" />
+                  <div className="flex justify-between items-center text-[9px] lg:text-[11px] uppercase tracking-[0.16em] opacity-80 font-mono">
+                    <span className="truncate pr-4">{work.tags.slice(0, 3).join(" • ")}</span>
+                    <span className="whitespace-nowrap">{work.year}</span>
                   </div>
                 </div>
 
