@@ -27,15 +27,15 @@ export const media = {
   servicesSeoul: "/media/korea_still.jpg",
 
   // About
-  aboutVideo: "/media/hero_image.jpg",
-  aboutPortrait: "/media/hero_image.jpg",
-  aboutExperienceStill: "/media/korea_still.jpg",
+  aboutVideo: "/media/DSCF0725_converted-1.webp",
+  aboutPortrait: "/media/main.jpg",
+  aboutExperienceStill: "/media/still-08.webp",
 
   // Works
   worksSquare: "/media/project_cover.jpg",
 
   // Shared
-  shibuya: "/media/korea_still.jpg",
+  shibuya: "/media/still-08.webp",
 
   // CTAs
   ctaBike: "/media/hero_image.jpg",

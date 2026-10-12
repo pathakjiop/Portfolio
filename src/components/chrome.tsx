@@ -8,14 +8,22 @@ type Theme = "light" | "dark";
 import gsap from "gsap";
 
 function useTheme() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      const stored = window.localStorage.getItem("atharv-theme");
+      if (stored === "dark" || stored === "light") return stored;
+      if (document.documentElement.classList.contains("dark")) return "dark";
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+    }
+    return "light";
+  });
 
   useEffect(() => {
     const stored = window.localStorage.getItem("atharv-theme");
-    if (stored === "dark" || stored === "light") {
-      setTheme(stored);
-      document.documentElement.classList.toggle("dark", stored === "dark");
-    }
+    const isDark = stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const active = isDark ? "dark" : "light";
+    setTheme(active);
+    document.documentElement.classList.toggle("dark", active === "dark");
   }, []);
 
   const toggle = () => {
@@ -166,7 +174,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
           aria-label="Atharv Pathak home"
           className="col-span-2 flex items-center border-r border-primary/40 px-4 md:col-span-3"
         >
-          <span className="wordmark" />
+          <span className="wordmark">Namaste.</span>
         </Link>
         <div className="hidden border-r border-primary/40 md:col-span-6 md:block">
           <ClockMarquee />
@@ -256,14 +264,11 @@ export function SiteFrame({ children }: { children: ReactNode }) {
 
 export function ShibuyaBlock() {
   return (
-    <div className="relative h-80 w-full overflow-hidden border-b border-paper/30 md:h-[450px]">
-      <video
-        src="/media/sea.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="h-full w-full object-cover"
+    <div className="relative h-60 w-full overflow-hidden border-b border-paper/30 md:h-80">
+      <img
+        src="/media/still-08.webp"
+        alt="Shibuya pedestrian crossing"
+        className="h-full w-full object-cover object-center"
       />
     </div>
   );
@@ -307,7 +312,9 @@ export function Footer() {
         </div>
       </div>
       <div className="overflow-hidden border-t border-paper/30 pt-4 px-4 md:px-8">
-        <div className="wordmark-xl" role="img" aria-label="Atharv." />
+        <div className="wordmark-xl" role="img" aria-label="Namaste.">
+          Namaste.
+        </div>
       </div>
     </footer>
   );
@@ -315,47 +322,41 @@ export function Footer() {
 
 import toast from "react-hot-toast";
 
-export function ChatCta() {
+export function ChatCta({ image = "/media/chat-bike.jpg" }: { image?: string }) {
   return (
-    <section className="flex min-h-[calc(100svh-3.5rem)] w-full flex-col border-t border-primary/50 bg-paper text-primary md:min-h-[calc(100svh-4rem)]">
-      <div className="grid flex-1 grid-cols-4 md:grid-cols-12">
-        <div className="col-span-4 flex flex-col border-x border-primary/50 md:col-span-10 md:col-start-2">
-          {/* heading block */}
-          <div className="flex min-h-[30svh] flex-col justify-end px-5 pb-6 pt-5">
-            <span className="mb-2 block text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
-              Want to
+    <section className="border-t border-primary/50 bg-paper text-primary">
+      <div className="grid grid-cols-1 md:grid-cols-12 border-x border-primary/50">
+        <div className="md:col-span-7 p-6 md:p-10 lg:p-12 flex flex-col justify-between border-b md:border-b-0 md:border-r border-primary/50">
+          <div>
+            <span className="mb-2 block text-[0.58rem] font-bold font-mono uppercase tracking-[0.24em] opacity-65">
+              SAY HI
             </span>
-            <h2 className="text-[70px] font-extrabold leading-[0.85] tracking-[-0.06em] text-primary lg:text-[96px]">
+            <h2 className="text-[3.8rem] md:text-[5.5rem] lg:text-[7rem] font-extrabold leading-[0.85] tracking-[-0.06em]">
               chat?
             </h2>
           </div>
-
-          {/* text + image split */}
-          <div className="grid flex-1 border-t border-primary/50 md:grid-cols-[2fr_3fr]">
-            <div className="flex flex-col justify-start border-primary/50 px-5 pb-8 pt-12 md:border-r md:pt-[100px]">
-              <p className="mb-8 text-lg font-medium md:text-xl">
-                Got a project in mind? I'd love to hear about it.
-              </p>
-              <div>
-                <Link
-                  to="/contact"
-                  className="inline-block border border-primary px-5 py-3 text-xl font-medium uppercase tracking-wider transition-colors hover:bg-primary hover:text-paper"
-                  onClick={() => toast.success("Redirecting to Contact page!", { icon: "🚀" })}
-                >
-                  <Roll>Contact me</Roll>
-                </Link>
-              </div>
-            </div>
-
-            {/* image fills the whole cell: full width + full height */}
-            <div className="relative min-h-[320px] md:min-h-0">
-              <img
-                src="/media/wall.jpg"
-                alt="Chat"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
+          <div className="pt-8">
+            <div className="w-full border-b border-primary/50 mb-6" />
+            <p className="text-sm md:text-base font-medium opacity-90 mb-6">
+              Got a question in mind? I'd love to hear about it.
+            </p>
+            <div>
+              <Link
+                to="/contact"
+                className="inline-block border border-primary px-5 py-2.5 text-[0.65rem] font-mono uppercase tracking-widest transition-colors hover:bg-primary hover:text-paper"
+                onClick={() => toast.success("Redirecting to Contact page!", { icon: "🚀" })}
+              >
+                <Roll>Contact me</Roll>
+              </Link>
             </div>
           </div>
+        </div>
+        <div className="md:col-span-5 relative min-h-[300px] md:min-h-full overflow-hidden bg-primary/5">
+          <img
+            src={image}
+            alt="Say hi"
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          />
         </div>
       </div>
     </section>

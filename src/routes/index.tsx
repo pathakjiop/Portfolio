@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type Ref } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { ChatCta } from "@/components/chrome";
 import { IntroLoader, hasIntroPlayed } from "@/components/intro/IntroLoader";
@@ -29,18 +29,28 @@ const quoteImages = [
   "quote5.png"
 ];
 
-function QuoteSlideshow() {
+function QuoteSlideshow({
+  innerRef,
+  active,
+  className = "relative col-span-1 md:col-span-8 h-full overflow-hidden border-b md:border-b-0 md:border-r border-primary/50",
+}: {
+  innerRef?: Ref<HTMLDivElement>;
+  active: boolean;
+  className?: string;
+}) {
   const [current, setCurrent] = useState(0);
 
+  // don't start cycling until the intro is over, so quote1 is still showing when the loader hands over
   useEffect(() => {
+    if (!active) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % quoteImages.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [active]);
 
   return (
-    <div className="relative col-span-4 md:col-span-8 aspect-[4/3] md:aspect-auto md:h-full overflow-hidden">
+    <div ref={innerRef} className={className}>
       <AnimatePresence>
         <motion.img
           key={`light-${current}`}
@@ -68,7 +78,7 @@ function QuoteSlideshow() {
 }
 
 // images the loader waits for before the counter may reach 100 (a missing file never blocks it)
-const INTRO_ASSETS = ["/media/pink.webp", "/media/qoutes/light/quote1.png?v=2"];
+const INTRO_ASSETS = ["/media/pink.webp"];
 
 function Home() {
   const [index, setIndex] = useState(2);
@@ -77,6 +87,7 @@ function Home() {
   const [intro, setIntro] = useState(() => !hasIntroPlayed());
   const [showLoader, setShowLoader] = useState(() => !hasIntroPlayed());
   const heroRef = useRef<HTMLElement>(null);
+  const quoteRef = useRef<HTMLDivElement>(null);
   const work = selected[index] ?? selected[0];
 
   const [isMobile, setIsMobile] = useState(false);
@@ -162,14 +173,19 @@ function Home() {
 
       <section
         ref={heroRef}
-        className="flex flex-col border-b md:min-h-[calc(100svh-4rem)] border-primary/50 relative z-40 bg-paper"
+        className="flex flex-col h-auto md:h-[calc(100svh-4rem)] border-b border-primary/50 relative z-40 bg-paper overflow-hidden"
       >
-        <div className="grid grid-cols-4 md:grid-cols-12 md:min-h-[70svh] md:flex-1 border-b border-primary/50 bg-paper">
+        {/* TOP ROW: Two images with vertical divider (8 cols / 4 cols) */}
+        <div className="grid grid-cols-1 md:grid-cols-12 border-b border-primary/50 bg-paper h-[38vh] sm:h-[42vh] md:h-[48vh] lg:h-[50vh] max-h-[480px]">
+          {/* Quote Slideshow (8 columns on desktop) */}
+          <QuoteSlideshow
+            innerRef={quoteRef}
+            active={!showLoader}
+            className="relative col-span-1 md:col-span-8 h-full overflow-hidden border-b md:border-b-0 md:border-r border-primary/50"
+          />
 
-          {/* Quote Slideshow */}
-          <QuoteSlideshow />
-          {/* IMAGE ON LEFT */}
-          <div className="relative col-span-4 md:col-span-4 aspect-[3/4] md:aspect-auto md:h-full overflow-hidden border-b md:border-b-0 md:border-r border-primary/50 cursor-crosshair">
+          {/* Right Image (4 columns on desktop) */}
+          <div className="relative col-span-1 md:col-span-4 h-full overflow-hidden cursor-crosshair">
             <motion.img
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -179,35 +195,43 @@ function Home() {
             />
           </div>
         </div>
-        <div className="grid grid-cols-4 md:grid-cols-12 bg-paper relative">
-          <div className="col-span-4 flex items-end px-3 py-3 md:col-span-7 md:px-4 md:py-5 overflow-hidden">
+
+        {/* BOTTOM ROW: Name (7 cols) | Roles (3 cols) | Monogram (2 cols) */}
+        <div className="grid grid-cols-12 bg-paper relative flex-1 min-h-[160px] md:min-h-0">
+          {/* Cell 1: Name / Wordmark (7 columns) */}
+          <div className="col-span-12 md:col-span-7 flex items-end p-3 sm:p-4 md:p-5 lg:p-6 overflow-hidden border-b md:border-b-0 md:border-r border-primary/50">
             <motion.p
               initial={{ y: 150, opacity: 0 }}
               animate={intro ? { y: 150, opacity: 0 } : { y: 0, opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[clamp(3.5rem,22vw,17rem)] leading-[0.8] font-bold tracking-[-0.13em] text-primary"
+              className="text-[clamp(2.8rem,6.8vw,7.6rem)] leading-[0.85] font-bold tracking-[-0.08em] text-primary select-none"
             >
               Atharv Pathak.
             </motion.p>
           </div>
+
+          {/* Cell 2: Roles (3 columns) */}
           <motion.ul
             initial="hidden"
             animate={intro ? "hidden" : "visible"}
             variants={{
               visible: { transition: { staggerChildren: 0.1, delayChildren: 0.4 } }
             }}
-            className="col-span-3 md:col-span-3 md:border-l border-primary/50 p-3 md:p-4 flex flex-col justify-end gap-1 text-base leading-[1.15] font-medium tracking-[-0.02em] md:text-xl lg:text-2xl"
+            className="col-span-8 md:col-span-3 flex flex-col justify-end gap-1 p-3 sm:p-4 md:p-5 lg:p-6 border-r border-primary/50 text-base leading-[1.15] font-medium tracking-[-0.02em] md:text-lg lg:text-2xl"
           >
             <motion.li variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}>Web Developer</motion.li>
             <motion.li variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}>UX Designer</motion.li>
             <motion.li variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1 } }}>ML Learner</motion.li>
           </motion.ul>
-          <div className="col-span-1 md:col-span-2 md:border-l border-primary/50 p-3 md:p-4 flex items-center justify-center">
+
+          {/* Cell 3: Monogram (2 columns) */}
+          <div className="col-span-4 md:col-span-2 flex items-center justify-center p-3 sm:p-4 md:p-5">
             <motion.span
               initial={{ scale: 0.5, opacity: 0 }}
               animate={intro ? { scale: 0.5, opacity: 0 } : { scale: 1, opacity: 1 }}
               transition={{ delay: 0.8, duration: 0.6, ease: "easeOut" }}
               className="monogram"
+              aria-hidden
             />
           </div>
         </div>

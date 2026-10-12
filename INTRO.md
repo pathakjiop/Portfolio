@@ -6,7 +6,7 @@ the hero, and the header slides in.
 
 ## Files
 - `src/components/intro/room.ts`        geometry + canvas drawing (no DOM). Fitted to the reference frame.
-- `src/components/intro/IntroLoader.tsx` timeline, counter, scroll lock, hero window reveal.
+- `src/components/intro/IntroLoader.tsx` timeline, counter, scroll lock, hero window reveal (no image in the intro).
 - `src/routes/index.tsx`                mounts the loader; `INTRO_ASSETS` = images the counter waits for.
 - `src/styles.css`                      `--intro-bg`, `--intro-ink`, counter style, header slide-in, hairline scrollbar.
 - `src/components/chrome.tsx`           header got the `site-header` class (parked above the viewport during the intro).

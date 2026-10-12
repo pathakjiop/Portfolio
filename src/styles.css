@@ -2,12 +2,15 @@
 
 @theme {
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-hindi: "Yatra One", "Rozha One", serif;
   --color-paper: #dad2d8;
   --color-primary: #143642;
   --color-ink: #143642;
 }
 
-.dark {
+.dark,
+html.dark,
+:root.dark {
   --color-paper: #143642;
   --color-primary: #dad2d8;
   --color-ink: #dad2d8;
@@ -121,54 +124,49 @@
   }
 }
 
-.wordmark,
-.wordmark-xl,
-.monogram {
-  background-color: currentColor;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-
 .wordmark {
-  display: inline-block;
-  height: 1.85rem;
-  aspect-ratio: 787 / 300;
-  -webkit-mask-image: url("/media/bello-site-logo-primary.svg");
-  mask-image: url("/media/bello-site-logo-primary.svg");
-  -webkit-mask-position: left center;
-  mask-position: left center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--font-hindi), "Yatra One", serif;
+  font-size: 1.7rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: currentColor;
+  text-decoration: none;
+  user-select: none;
 }
 
 @media (min-width: 768px) {
   .wordmark {
-    height: 2.15rem;
+    font-size: 2.1rem;
   }
 }
 
 .wordmark-xl {
   display: block;
-  height: 22vw;
-  width: 118%;
-  margin-left: -2%;
-  -webkit-mask-image: url("/media/bello-site-logo-primary.svg");
-  mask-image: url("/media/bello-site-logo-primary.svg");
-  -webkit-mask-position: left bottom;
-  mask-position: left bottom;
-  -webkit-mask-size: contain;
-  mask-size: contain;
+  font-family: var(--font-hindi), "Yatra One", serif;
+  font-size: clamp(3.8rem, 19vw, 21rem);
+  line-height: 0.82;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: currentColor;
+  user-select: none;
+  white-space: nowrap;
 }
 
 .monogram {
   display: block;
-  width: min(9rem, 70%);
+  width: min(8rem, 70%);
   aspect-ratio: 1;
   margin-inline: auto;
+  background-color: currentColor;
   -webkit-mask-image: url("/media/bello-branding-primary.svg");
   mask-image: url("/media/bello-branding-primary.svg");
   -webkit-mask-position: center;
   mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   -webkit-mask-size: contain;
   mask-size: contain;
 }
@@ -321,8 +319,8 @@
 
 /* ------------------------------------------------------------------ intro */
 :root {
-  --intro-bg: #dad2d8;
-  --intro-ink: #143642;
+  --intro-bg: var(--color-paper, #dad2d8);
+  --intro-ink: var(--color-primary, #143642);
 }
 
 .intro-root {
@@ -332,6 +330,15 @@
   overflow: hidden;
   background: var(--intro-bg);
   color: var(--intro-ink);
+}
+
+.dark .intro-root,
+html.dark .intro-root,
+:root.dark .intro-root {
+  --intro-bg: #143642;
+  --intro-ink: #dad2d8;
+  background: #143642 !important;
+  color: #dad2d8 !important;
 }
 
 .intro-counter {

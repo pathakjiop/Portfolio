@@ -38,14 +38,14 @@ type Props = {
   onDone: () => void;
 };
 
-const MIN_LOAD = 2500; // ms - the counter never finishes faster than this
-const MAX_WAIT = 6000; // ms - give up waiting for assets
-const HOLD = 420; // ms - pause on 100
-const DOLLY = 1750; // ms - camera push-in + window opening
+const MIN_LOAD = 4200; // ms - the counter never finishes faster than this (slow, deliberate)
+const MAX_WAIT = 7500; // ms - give up waiting for assets
+const HOLD = 350; // ms - pause on 100
+const DOLLY = 2600; // ms - camera push-in + window opening (longer = smoother)
 const CZ_END = 1.32; // camera depth at the end (back wall is at 2)
 
-const easeIO = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 2.2);
+const easeSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2; // gentle in/out, no sudden acceleration
 
 const HERO_STYLES = ["zIndex", "willChange", "opacity", "clipPath", "transform", "transformOrigin"] as const;
 
@@ -134,10 +134,14 @@ export function IntroLoader({ heroRef, assets = [], onReveal, onDone }: Props) {
       };
     }
 
-    const ink =
-      parseCssColor(getComputedStyle(root).getPropertyValue("--intro-ink")) ??
-      parseCssColor(getComputedStyle(root).color) ??
-      [20, 54, 66];
+    const getInk = (): [number, number, number] => {
+      const isDark = document.documentElement.classList.contains("dark");
+      return (
+        parseCssColor(getComputedStyle(root).getPropertyValue("--intro-ink")) ??
+        parseCssColor(getComputedStyle(root).color) ??
+        (isDark ? [218, 210, 216] : [20, 54, 66])
+      );
+    };
 
     /* ---- sizing -------------------------------------------------------- */
     let m: Metrics = metrics(1, 1);
@@ -231,12 +235,12 @@ export function IntroLoader({ heroRef, assets = [], onReveal, onDone }: Props) {
       }
 
       const u = phase === "dolly" ? clamp((now - tDolly) / DOLLY) : 0;
-      const calm = phase === "dolly" ? easeIO(clamp(u / 0.75)) : 0;
+      const calm = phase === "dolly" ? easeSine(clamp(u / 0.8)) : 0;
       const par = 1 - calm;
       const sway = Math.sin(t / 1700) * 0.004;
 
       const pose: Pose = {
-        cz: CZ_END * easeIO(u),
+        cz: CZ_END * easeSine(u),
         phi: REST_POSE.phi * (1 - calm) + (mouse.sx * 0.012 + sway) * par,
         psi: REST_POSE.psi * (1 - calm) + mouse.sy * 0.008 * par,
         tx: REST_POSE.tx * (1 - calm) + mouse.sx * 0.02 * par,
@@ -244,8 +248,8 @@ export function IntroLoader({ heroRef, assets = [], onReveal, onDone }: Props) {
       };
 
       /* lines */
-      const lineFade = phase === "dolly" ? 1 - clamp((u - 0.5) / 0.4) : 1;
-      drawRoom(ctx, segs, pose, m, Math.pow(shown / 100, 1.5), dpr, ink as [number, number, number], lineFade);
+      const lineFade = phase === "dolly" ? 1 - easeSine(clamp((u - 0.3) / 0.5)) : 1;
+      drawRoom(ctx, segs, pose, m, Math.pow(shown / 100, 1.5), dpr, getInk(), lineFade);
 
       /* counter rides on the back wall's bottom-left corner */
       const label = phase === "load" ? Math.min(99, Math.round(shown)) : 100;
@@ -254,14 +258,14 @@ export function IntroLoader({ heroRef, assets = [], onReveal, onDone }: Props) {
       if (anchor) {
         cnt.style.transform = `translate3d(${anchor[0] + 6}px, ${anchor[1] + 6}px, 0)`;
       }
-      cnt.style.opacity = String(phase === "dolly" ? 1 - clamp(u / 0.22) : 1);
+      cnt.style.opacity = String(phase === "dolly" ? 1 - easeSine(clamp(u / 0.3)) : 1);
 
       /* hero seen through the back wall */
       if (phase === "dolly" && hero && heroRect) {
         const quad = wallQuad(pose, m);
         const cx = (quad[0][0] + quad[2][0]) / 2;
         const cy = (quad[0][1] + quad[2][1]) / 2;
-        const s = lerp(0.8, 1, easeIO(u));
+        const s = lerp(0.88, 1, easeSine(u));
         const ox = cx - heroRect.left;
         const oy = cy - heroRect.top;
         // clip-path is applied before the transform, so map the screen quad back into local space
@@ -269,15 +273,15 @@ export function IntroLoader({ heroRef, assets = [], onReveal, onDone }: Props) {
         hero.style.transformOrigin = `${ox}px ${oy}px`;
         hero.style.transform = `scale(${s})`;
         hero.style.clipPath = `polygon(${poly})`;
-        hero.style.opacity = String(clamp(u / 0.2));
+        hero.style.opacity = String(easeSine(clamp(u / 0.35)));
       }
 
       if (phase === "dolly") {
-        if (!revealed && u >= 0.45) {
+        if (!revealed && u >= 0.35) {
           revealed = true;
           cb.current.onReveal();
         }
-        root.style.opacity = String(1 - clamp((u - 0.62) / 0.28));
+        root.style.opacity = String(1 - easeSine(clamp((u - 0.35) / 0.55)));
         if (u >= 1) {
           if (!revealed) cb.current.onReveal();
           finish();
