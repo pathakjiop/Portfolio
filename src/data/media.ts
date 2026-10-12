@@ -35,14 +35,14 @@ export const media = {
   worksSquare: "/media/project_cover.jpg",
 
   // Shared
-  shibuya: "/media/still-08.webp",
+  shibuya: "/media/shibuya-crosswalk.jpg",
 
   // CTAs
   ctaBike: "/media/hero_image.jpg",
   ctaWorks: "/media/project_cover.jpg",
 
   // Contact
-  contactWall: "/media/panda.jpg",
+  contactWall: "/media/wall.jpg",
 
   // Work Covers
   coverJapan: "/media/korea_still.jpg",

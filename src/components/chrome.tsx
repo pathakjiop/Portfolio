@@ -266,8 +266,8 @@ export function ShibuyaBlock() {
   return (
     <div className="footer-band-wrapper relative h-60 w-full overflow-hidden border-b border-paper/30 md:h-[35vh]">
       <img
-        src="/media/still-08.webp"
-        alt="Visual strip"
+        src={media.shibuya || "/media/shibuya-crosswalk.jpg"}
+        alt="Shibuya pedestrian crossing"
         className="footer-band-img h-[125%] w-full object-cover object-center will-change-transform -translate-y-[10%]"
       />
     </div>
