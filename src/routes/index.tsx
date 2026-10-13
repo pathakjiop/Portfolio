@@ -165,6 +165,7 @@ function Home() {
       {showLoader && (
         <IntroLoader
           heroRef={heroRef}
+          targetRef={quoteRef}
           assets={INTRO_ASSETS}
           onReveal={() => setIntro(false)}
           onDone={() => setShowLoader(false)}
@@ -185,7 +186,13 @@ function Home() {
           />
 
           {/* Right Image (4 columns on desktop) */}
-          <div className="relative col-span-1 md:col-span-4 h-full overflow-hidden cursor-crosshair">
+          {/* wipes up from the bottom once the intro photo has landed */}
+          <motion.div
+            initial={intro ? { clipPath: "inset(100% 0% 0% 0%)" } : false}
+            animate={{ clipPath: intro ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 0% 0%)" }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="relative col-span-1 md:col-span-4 h-full overflow-hidden cursor-crosshair"
+          >
             <motion.img
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -193,29 +200,39 @@ function Home() {
               alt="Atharv Pathak"
               className="absolute inset-0 h-full w-full object-cover transform-gpu"
             />
-          </div>
+          </motion.div>
         </div>
 
         {/* BOTTOM ROW: Name (7 cols) | Roles (3 cols) | Monogram (2 cols) */}
         <div className="grid grid-cols-12 bg-paper relative flex-1 min-h-[160px] md:min-h-0">
           {/* Cell 1: Name / Wordmark (7 columns) */}
           <div className="col-span-12 md:col-span-7 flex items-end p-3 sm:p-4 md:p-5 lg:p-6 overflow-hidden border-b md:border-b-0 md:border-r border-primary/50">
-            <motion.p
-              initial={{ y: 150, opacity: 0 }}
-              animate={intro ? { y: 150, opacity: 0 } : { y: 0, opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            {/* letters fade in one after another, like the reference intro */}
+            <p
+              aria-label="Atharv Pathak."
               className="text-[clamp(2.8rem,6.8vw,7.6rem)] leading-[0.85] font-bold tracking-[-0.08em] text-primary select-none"
             >
-              Atharv Pathak.
-            </motion.p>
+              {"Atharv Pathak.".split("").map((ch, i) => (
+                <motion.span
+                  key={i}
+                  aria-hidden
+                  initial={intro ? { opacity: 0 } : false}
+                  animate={{ opacity: intro ? 0 : 1 }}
+                  transition={{ delay: 0.8 + i * 0.035, duration: 0.25, ease: "easeOut" }}
+                  style={{ display: "inline-block", whiteSpace: "pre" }}
+                >
+                  {ch}
+                </motion.span>
+              ))}
+            </p>
           </div>
 
           {/* Cell 2: Roles (3 columns) */}
           <motion.ul
-            initial="hidden"
+            initial={intro ? "hidden" : false}
             animate={intro ? "hidden" : "visible"}
             variants={{
-              visible: { transition: { staggerChildren: 0.1, delayChildren: 0.4 } }
+              visible: { transition: { staggerChildren: 0.1, delayChildren: 1.0 } }
             }}
             className="col-span-8 md:col-span-3 flex flex-col justify-end gap-1 p-3 sm:p-4 md:p-5 lg:p-6 border-r border-primary/50 text-base leading-[1.15] font-medium tracking-[-0.02em] md:text-lg lg:text-2xl"
           >
@@ -227,9 +244,9 @@ function Home() {
           {/* Cell 3: Monogram (2 columns) */}
           <div className="col-span-4 md:col-span-2 flex items-center justify-center p-3 sm:p-4 md:p-5">
             <motion.span
-              initial={{ scale: 0.5, opacity: 0 }}
+              initial={intro ? { scale: 0.5, opacity: 0 } : false}
               animate={intro ? { scale: 0.5, opacity: 0 } : { scale: 1, opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.6, ease: "easeOut" }}
+              transition={{ delay: 1.15, duration: 0.6, ease: "easeOut" }}
               className="monogram"
               aria-hidden
             />
@@ -297,9 +314,8 @@ function Home() {
                     key={item.slug}
                     type="button"
                     onClick={() => setIndex(i)}
-                    className={`relative w-[150px] lg:w-full aspect-square lg:aspect-auto lg:flex-1 shrink-0 border-r lg:border-r-0 lg:border-b border-primary/50 lg:last:border-b-0 cursor-pointer overflow-hidden group transition-all ${
-                      i === index ? "ring-2 ring-primary ring-inset" : ""
-                    }`}
+                    className={`relative w-[150px] lg:w-full aspect-square lg:aspect-auto lg:flex-1 shrink-0 border-r lg:border-r-0 lg:border-b border-primary/50 lg:last:border-b-0 cursor-pointer overflow-hidden group transition-all ${i === index ? "ring-2 ring-primary ring-inset" : ""
+                      }`}
                     aria-label={item.title}
                   >
                     <img src={item.cover} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
