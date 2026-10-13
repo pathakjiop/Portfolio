@@ -2,6 +2,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from "@
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { SiteFrame } from "@/components/chrome";
+import { StairTransition } from "@/components/StairTransition";
 import appCss from "../styles.css?url";
 
 import { SmoothScroll } from "@/components/SmoothScroll";
@@ -44,6 +45,7 @@ export const Route = createRootRoute({
       </head>
       <body>
         <PreviewHostBridge />
+        <StairTransition />
         <AuthProvider>
           <SmoothScroll>
             <SiteFrame>
