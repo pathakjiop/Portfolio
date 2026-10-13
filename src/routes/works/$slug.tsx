@@ -26,7 +26,7 @@ export const Route = createFileRoute("/works/$slug")({
     const work = getWork(params.slug);
     return {
       meta: [
-        { title: work ? `${work.title} — Atharv Pathak` : "Work — Atharv Pathak" },
+        { title: "Atharv Pathak" },
         { name: "description", content: work ? work.excerpt : "" },
       ],
     };

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/works/")({
   component: WorksPage,
   head: () => ({
     meta: [
-      { title: "Works & Engineering Portfolio — Atharv Pathak" },
+      { title: "Atharv Pathak" },
       {
         name: "description",
         content:

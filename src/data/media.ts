@@ -35,7 +35,7 @@ export const media = {
   worksSquare: "/media/project_cover.jpg",
 
   // Shared
-  shibuya: "/media/shibuya-crosswalk.jpg",
+  shibuya: "/media/sea.mp4",
 
   // CTAs
   ctaBike: "/media/hero_image.jpg",

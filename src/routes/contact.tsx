@@ -21,7 +21,7 @@ export const Route = createFileRoute("/contact")({
   component: Contact,
   head: () => ({
     meta: [
-      { title: "Contact — Atharv Pathak" },
+      { title: "Atharv Pathak" },
       { name: "description", content: "Get in touch with Atharv Pathak. Send a message, hire for a project, or connect on socials." },
     ],
   }),

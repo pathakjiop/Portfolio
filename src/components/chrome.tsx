@@ -263,13 +263,27 @@ export function SiteFrame({ children }: { children: ReactNode }) {
 }
 
 export function ShibuyaBlock() {
+  const src = media.shibuya || "/media/sea.mp4";
+  const isVideo = src.endsWith(".mp4") || src.endsWith(".webm") || src.endsWith(".mov");
+
   return (
     <div className="footer-band-wrapper relative h-60 w-full overflow-hidden border-b border-paper/30 md:h-[35vh]">
-      <img
-        src={media.shibuya || "/media/shibuya-crosswalk.jpg"}
-        alt="Shibuya pedestrian crossing"
-        className="footer-band-img h-[125%] w-full object-cover object-center will-change-transform -translate-y-[10%]"
-      />
+      {isVideo ? (
+        <video
+          src={src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="footer-band-img h-[125%] w-full object-cover object-center will-change-transform -translate-y-[10%]"
+        />
+      ) : (
+        <img
+          src={src}
+          alt="Footer band media"
+          className="footer-band-img h-[125%] w-full object-cover object-center will-change-transform -translate-y-[10%]"
+        />
+      )}
     </div>
   );
 }
@@ -351,7 +365,6 @@ export function ChatCta({ image = "/media/chat-bike.jpg" }: { image?: string }) 
               <Link
                 to="/contact"
                 className="inline-block border border-primary px-5 py-2.5 text-[0.65rem] font-mono uppercase tracking-widest transition-colors hover:bg-primary hover:text-paper"
-                onClick={() => toast.success("Redirecting to Contact page!", { icon: "🚀" })}
               >
                 <Roll>Contact me</Roll>
               </Link>

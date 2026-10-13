@@ -28,7 +28,7 @@ export const Route = createFileRoute("/about")({
   component: About,
   head: () => ({
     meta: [
-      { title: "About — Atharv Pathak | Python & Full-Stack Developer" },
+      { title: "Atharv Pathak" },
       {
         name: "description",
         content:
