@@ -1,41 +1,29 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Line } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
-import {
-  CENTER,
-  HINGE_Y,
-  HINGE_Z,
-  SCREEN,
-  buildBaseOutline,
-  buildKeys,
-  buildLid,
-  type Seg,
-} from "@/lib/laptop-wire";
 
 /**
- * Wireframe laptop (procedural – no .glb needed).
+ * Wireframe laptop powered by laptop_lines_6a041d.glb (light) and laptop_lines_f5b841.glb (dark).
  *
  * All motion is driven through one plain mutable object (`LaptopState`) so the page can animate it
  * with GSAP (intro) and with scroll (spin) without re-rendering React every frame.
  */
 export type LaptopState = {
-  /** 0 → 1: strokes draw on (lid first, then base, then keys) */
+  /** 0 → 1: strokes draw on */
   draw: number;
   /** 0 → 1: the screen picture fades in */
   screen: number;
   yaw: number;
   pitch: number;
-  /** lid opening angle in radians (0 = closed) */
   lid: number;
-  /** vertical offset in world units (the hero sits low so the base is cropped by the viewport) */
   y: number;
   scale: number;
 };
 
-type Pts = [number, number, number][];
-const toPoints = (segs: Seg[]): Pts => segs.flatMap((s) => [[s[0], s[1], s[2]], [s[3], s[4], s[5]]] as Pts);
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
+const SCREEN_W = 1.86;
+const SCREEN_H = 1.30;
 
 function useCoverTexture(url?: string) {
   const [tex, setTex] = useState<THREE.Texture | null>(null);
@@ -57,7 +45,7 @@ function useCoverTexture(url?: string) {
         // "object-fit: cover" for the screen rectangle
         const img = t.image as { width: number; height: number } | undefined;
         if (img?.width && img?.height) {
-          const screenAspect = SCREEN.width / SCREEN.height;
+          const screenAspect = SCREEN_W / SCREEN_H;
           const imgAspect = img.width / img.height;
           if (imgAspect > screenAspect) {
             t.repeat.x = screenAspect / imgAspect;
@@ -85,31 +73,30 @@ function useCoverTexture(url?: string) {
 type SceneProps = {
   state: MutableRefObject<LaptopState>;
   cover?: string;
-  ink: string;
-  screenBg: string;
+  isDark: boolean;
 };
 
-function Scene({ state, cover, ink, screenBg }: SceneProps) {
+function Scene({ state, cover, isDark }: SceneProps) {
+  const modelUrl = isDark ? "/model/laptop_lines_f5b841.glb" : "/model/laptop_lines_6a041d.glb";
+  const { scene } = useGLTF(modelUrl);
+  const cloned = useMemo(() => scene.clone(true), [scene]);
   const root = useRef<THREE.Group>(null);
-  const lid = useRef<THREE.Group>(null);
-  const baseLine = useRef<any>(null);
-  const keysLine = useRef<any>(null);
-  const lidLine = useRef<any>(null);
   const screenMat = useRef<THREE.MeshBasicMaterial>(null);
-  const shown = useRef<{ yaw: number; pitch: number; lid: number; y?: number; scale?: number }>({
+  const shown = useRef<{ yaw: number; pitch: number; y?: number; scale?: number }>({
     yaw: state.current.yaw,
     pitch: state.current.pitch,
-    lid: state.current.lid,
     y: state.current.y,
     scale: state.current.scale,
   });
 
-  const base = useMemo(() => buildBaseOutline(), []);
-  const keys = useMemo(() => buildKeys(), []);
-  const lidSegs = useMemo(() => buildLid(), []);
-  const basePts = useMemo(() => toPoints(base), [base]);
-  const keyPts = useMemo(() => toPoints(keys), [keys]);
-  const lidPts = useMemo(() => toPoints(lidSegs), [lidSegs]);
+  const linesObj = useMemo(() => {
+    let found: THREE.LineSegments | null = null;
+    cloned.traverse((child) => {
+      if ((child as any).isLineSegments) found = child as THREE.LineSegments;
+    });
+    return found;
+  }, [cloned]);
+
   const tex = useCoverTexture(cover);
 
   useEffect(() => {
@@ -131,7 +118,6 @@ function Scene({ state, cover, ink, screenBg }: SceneProps) {
     const sh = shown.current;
     sh.yaw += (s.yaw - sh.yaw) * k;
     sh.pitch += (s.pitch - sh.pitch) * k;
-    sh.lid += (s.lid - sh.lid) * k;
 
     if (sh.y === undefined) sh.y = s.y;
     if (sh.scale === undefined) sh.scale = s.scale;
@@ -140,57 +126,43 @@ function Scene({ state, cover, ink, screenBg }: SceneProps) {
 
     g.rotation.set(sh.pitch, sh.yaw, 0);
     g.position.y = sh.y;
-    g.scale.setScalar(sh.scale);
-    if (lid.current) lid.current.rotation.x = -sh.lid;
+    g.scale.setScalar(sh.scale * 1.55);
 
-    // stroke draw-on: reveal segments in order via the instanced geometry count
-    const reveal = (line: any, total: number, t: number) => {
-      const geo = line?.geometry;
-      if (geo) geo.instanceCount = Math.floor(clamp01(t) * total + 1e-6);
-    };
-    reveal(lidLine.current, lidSegs.length, s.draw / 0.5);
-    reveal(baseLine.current, base.length, (s.draw - 0.25) / 0.45);
-    reveal(keysLine.current, keys.length, (s.draw - 0.55) / 0.45);
+    // Line drawing animation via geometry draw range
+    if (linesObj?.geometry?.index) {
+      const total = linesObj.geometry.index.count;
+      linesObj.geometry.setDrawRange(0, Math.floor(clamp01(s.draw) * total));
+    }
 
     if (screenMat.current) {
       screenMat.current.opacity = clamp01(s.screen);
     }
   });
 
-  const lineProps = { color: ink, lineWidth: 1.8, segments: true } as const;
-
   return (
     <group ref={root}>
-      <group position={[-CENTER[0], -CENTER[1], -CENTER[2]]}>
-        <Line ref={baseLine} points={basePts} {...lineProps} lineWidth={2} />
-        <Line ref={keysLine} points={keyPts} {...lineProps} lineWidth={1.3} transparent opacity={0.85} />
-        <group ref={lid} position={[0, HINGE_Y, HINGE_Z]}>
-          <Line ref={lidLine} points={lidPts} {...lineProps} lineWidth={2} />
-          {/* screen: plane rotated into the lid's local face (normal = -y local) */}
-          <mesh position={SCREEN.center} rotation={[Math.PI / 2, 0, 0]} renderOrder={-1}>
-            <planeGeometry args={[SCREEN.width, SCREEN.height]} />
-            <meshBasicMaterial
-              ref={screenMat}
-              map={tex ?? undefined}
-              color={tex ? "#ffffff" : screenBg}
-              transparent
-              opacity={0}
-              depthWrite={false}
-              toneMapped={false}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-        </group>
-      </group>
+      <primitive object={cloned} />
+      {/* Front screen quad aligned to the GLB laptop lid display */}
+      <mesh position={[-0.0195, 0.032, -0.812]} rotation={[-0.2576, 0, 0]} renderOrder={-1}>
+        <planeGeometry args={[SCREEN_W, SCREEN_H]} />
+        <meshBasicMaterial
+          ref={screenMat}
+          map={tex ?? undefined}
+          color="#ffffff"
+          transparent
+          opacity={0}
+          depthWrite={false}
+          toneMapped={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
     </group>
   );
 }
 
-function readInk(): string {
-  if (typeof window === "undefined") return "#143642";
-  const v = getComputedStyle(document.documentElement).getPropertyValue("--color-primary").trim();
-  return v || "#143642";
-}
+// Preload models for immediate display
+useGLTF.preload("/model/laptop_lines_6a041d.glb");
+useGLTF.preload("/model/laptop_lines_f5b841.glb");
 
 type Props = {
   state: MutableRefObject<LaptopState>;
@@ -201,13 +173,13 @@ type Props = {
 
 export function WireLaptop({ state, cover, className = "" }: Props) {
   const [mounted, setMounted] = useState(false);
-  const [ink, setInk] = useState("#143642");
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    setInk(readInk());
-    // follow the light/dark toggle (it flips a class on <html>)
-    const mo = new MutationObserver(() => setInk(readInk()));
+    const checkDark = () => setIsDark(document.documentElement.classList.contains("dark"));
+    checkDark();
+    const mo = new MutationObserver(checkDark);
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => mo.disconnect();
   }, []);
@@ -218,10 +190,10 @@ export function WireLaptop({ state, cover, className = "" }: Props) {
         <Canvas
           dpr={[1, 2]}
           gl={{ alpha: true, antialias: true }}
-          camera={{ position: [0, 0, 8], fov: 30 }}
+          camera={{ position: [0, 0, 7], fov: 30 }}
           style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
         >
-          <Scene state={state} cover={cover} ink={ink} screenBg={ink} />
+          <Scene state={state} cover={cover} isDark={isDark} />
         </Canvas>
       )}
     </div>

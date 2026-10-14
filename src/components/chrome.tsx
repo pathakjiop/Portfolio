@@ -174,7 +174,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
           aria-label="Atharv Pathak home"
           className="col-span-2 flex items-center border-r border-primary/40 px-4 md:col-span-3"
         >
-          <span className="wordmark">Namaste.</span>
+          <span className="wordmark font-bold text-2xl tracking-tighter">Namste.</span>
         </Link>
         <div className="hidden border-r border-primary/40 md:col-span-6 md:block">
           <ClockMarquee />
@@ -206,17 +206,17 @@ export function SiteFrame({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <div 
-        className={`fixed inset-0 z-40 bg-transparent transition-opacity duration-[600ms] ${menu ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} 
-        onClick={() => setMenu(false)} 
-        aria-hidden 
+      <div
+        className={`fixed inset-0 z-40 bg-transparent transition-opacity duration-[600ms] ${menu ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        onClick={() => setMenu(false)}
+        aria-hidden
       />
-      <div 
+      <div
         className={`fixed inset-y-0 right-0 z-50 w-[85vw] sm:w-1/2 md:w-4/12 bg-primary text-paper border-l border-paper/20 flex flex-col shadow-2xl transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${menu ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Close button inside sidebar */}
-        <button 
-          className="absolute top-0 right-0 h-14 md:h-16 w-14 md:w-16 border-b border-l border-paper/20 flex items-center justify-center hover:bg-paper/10 transition-colors" 
+        <button
+          className="absolute top-0 right-0 h-14 md:h-16 w-14 md:w-16 border-b border-l border-paper/20 flex items-center justify-center hover:bg-paper/10 transition-colors"
           onClick={() => setMenu(false)}
           aria-label="Close menu"
         >
@@ -225,7 +225,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
             <span className="h-[1.5px] w-full bg-current absolute top-1/2 -translate-y-1/2 -rotate-45" />
           </span>
         </button>
-        
+
         <nav className="flex flex-col mt-14 md:mt-16">
           <div className="border-t border-paper/20" />
           {nav.map((item, index) => (
@@ -244,7 +244,7 @@ export function SiteFrame({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
-        
+
         <div className="mt-auto px-6 py-8 md:px-8 md:py-10 flex flex-col gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-3">
             {socials.map((item) => (
@@ -326,8 +326,8 @@ export function Footer() {
         </div>
       </div>
       <div className="footer-wordmark-container overflow-hidden border-t border-paper/30 pt-4 px-4 md:px-8">
-        <div className="wordmark-xl footer-wordmark inline-block w-full overflow-hidden" role="img" aria-label="Namaste.">
-          {"Namaste.".split("").map((char, idx) => (
+        <div className="wordmark-xl footer-wordmark inline-block w-full overflow-hidden" role="img" aria-label="Namste.">
+          {"Namste.".split("").map((char, idx) => (
             <span
               key={idx}
               className="footer-wordmark-char inline-block will-change-transform"
@@ -343,7 +343,7 @@ export function Footer() {
 
 import toast from "react-hot-toast";
 
-export function ChatCta({ image = "/media/chat-bike.jpg" }: { image?: string }) {
+export function ChatCta({ image = "/media/nightwalk.jpeg" }: { image?: string }) {
   return (
     <section className="border-t border-primary/50 bg-paper text-primary">
       <div className="grid grid-cols-1 md:grid-cols-12 border-x border-primary/50">
