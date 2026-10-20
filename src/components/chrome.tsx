@@ -267,49 +267,48 @@ export function ShibuyaBlock() {
   const isVideo = src.endsWith(".mp4") || src.endsWith(".webm") || src.endsWith(".mov");
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
     const el = containerRef.current;
-    if (!el) return;
+    if (!el || !isVideo) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setShouldLoad(true);
           videoRef.current?.play().catch(() => { });
         } else {
           videoRef.current?.pause();
         }
       },
-      { rootMargin: "350px" }
+      { rootMargin: "200px" }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [isVideo]);
 
   return (
     <div
       ref={containerRef}
-      className="footer-band-wrapper relative h-60 w-full overflow-hidden border-b border-paper/30 md:h-[35vh]"
+      className="footer-band-wrapper relative h-64 sm:h-72 md:h-[38vh] lg:h-[44vh] w-full overflow-hidden border-b border-paper/30 bg-primary"
     >
       {isVideo ? (
         <video
           ref={videoRef}
-          src={shouldLoad ? src : undefined}
-          preload="none"
+          src={src}
+          preload="metadata"
+          autoPlay
           muted
           loop
           playsInline
-          className="footer-band-img h-[125%] w-full object-cover object-center will-change-transform -translate-y-[10%]"
+          className="footer-band-img h-full w-full object-cover object-center"
         />
       ) : (
         <img
           src={src}
           alt="Footer band media"
           loading="lazy"
-          className="footer-band-img h-[125%] w-full object-cover object-center will-change-transform -translate-y-[10%]"
+          className="footer-band-img h-full w-full object-cover object-center"
         />
       )}
     </div>
@@ -319,14 +318,14 @@ export function ShibuyaBlock() {
 
 export function Footer() {
   return (
-    <footer className="footer-root bg-primary text-paper h-full w-full">
+    <footer className="footer-root bg-primary text-paper relative z-20 w-full">
       <ShibuyaBlock />
-      <nav className="grid border-t border-paper/30 md:grid-cols-3 px-4 md:px-8">
+      <nav className="grid grid-cols-1 md:grid-cols-3 border-b border-paper/30 w-full">
         {nav.map((item) => (
           <Link
             key={item.to}
             to={item.to}
-            className="group flex items-center justify-center border-b border-paper/30 py-12 md:border-b-0 md:border-r md:py-16 md:last:border-r-0 transition-colors hover:bg-paper hover:text-primary"
+            className="group flex items-center justify-center border-b border-paper/30 py-10 md:border-b-0 md:border-r md:py-14 md:last:border-r-0 transition-colors hover:bg-paper hover:text-primary w-full"
           >
             <span className="text-base md:text-lg tracking-[0.2em] uppercase font-medium">
               <Roll>{item.label}</Roll>
@@ -334,7 +333,7 @@ export function Footer() {
           </Link>
         ))}
       </nav>
-      <div className="grid border-t border-paper/30 md:grid-cols-2 px-4 md:px-8">
+      <div className="grid md:grid-cols-2 px-4 md:px-8">
         <div className="border-b border-paper/30 py-6 md:border-r md:border-b-0 md:py-8 pr-6 md:pr-8">
           <p className="kicker opacity-70">Elsewhere</p>
           <ul className="mt-8 space-y-3">

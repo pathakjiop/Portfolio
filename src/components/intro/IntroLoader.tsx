@@ -20,7 +20,7 @@ import { useEffect, useLayoutEffect, useRef, type RefObject } from "react";
  * The room is a real pinhole projection (back wall + two side walls, ceiling and floor are
  * open). The camera path is keyframed from measurements of the recording.
  *
- * Stacking: the overlay is z-[45]: above the hero (z-40) and the fixed header (z-30), so the
+ * Stacking: the overlay is z-[60]: above the hero (z-40) and the fixed header (z-50), so the
  * hero and nav are revealed when the overlay's background goes away at the end.
  */
 
@@ -434,7 +434,7 @@ export function IntroLoader({ heroRef, targetRef, assets = [], onReveal, onDone 
     <div
       ref={rootRef}
       aria-hidden
-      className="fixed inset-0 z-[45] overflow-hidden bg-paper text-primary select-none"
+      className="fixed inset-0 z-[60] overflow-hidden bg-paper text-primary select-none"
     >
       {/* Yatra One for the wordmark (React 19 hoists this into <head>) */}
       <link

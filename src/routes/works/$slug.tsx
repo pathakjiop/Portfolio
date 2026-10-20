@@ -191,8 +191,8 @@ function WorkView({ work }: { work: Work }) {
       const scrollY = Math.max(0, window.scrollY);
       const settled = poseAt(0);
 
-      const transDist = desktop ? 320 : 220;
-      const stillDist = desktop ? 550 : 380; // buffer where laptop stays still
+      const transDist = desktop ? 240 : 180;
+      const stillDist = desktop ? 500 : 360; // buffer where laptop stays still
       const pTrans = Math.min(1, Math.max(0, scrollY / transDist));
       const easeTrans = pTrans * (2 - pTrans); // smooth ease-out quad
 
@@ -223,10 +223,7 @@ function WorkView({ work }: { work: Work }) {
       right.style.opacity = `${rightOpacity}`;
       if (desktop) {
         const slideX = (1 - easeTrans) * 30;
-        // Pin the right column at top:0 during the entrance so its title and top content
-        // are NEVER scrolled off-screen or hidden before the user can read them!
-        const translateY = Math.min(scrollY, transDist);
-        right.style.transform = `translate3d(${slideX}px, ${translateY}px, 0)`;
+        right.style.transform = `translate3d(${slideX}px, 0, 0)`;
       } else {
         right.style.transform = "none";
       }
@@ -323,7 +320,7 @@ function WorkView({ work }: { work: Work }) {
         </div>
 
         {/* ───────────── RIGHT: scrolling case study ───────────── */}
-        <div ref={rightRef} className="bg-paper relative flex shrink-0 flex-col lg:basis-[52%] lg:pb-[450px]">
+        <div ref={rightRef} className="bg-paper relative flex shrink-0 flex-col lg:basis-[52%] lg:pt-[240px]">
           {/* lead */}
           <div className="border-b border-primary/40 p-6 md:p-10 lg:p-12">
             <span className="kicker block text-primary/75 font-semibold">The work</span>
