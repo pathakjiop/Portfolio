@@ -191,8 +191,8 @@ function WorkView({ work }: { work: Work }) {
       const scrollY = Math.max(0, window.scrollY);
       const settled = poseAt(0);
 
-      const transDist = desktop ? 450 : 320;
-      const stillDist = desktop ? 650 : 480; // ~2-3 scrolls buffer where laptop stays still
+      const transDist = desktop ? 320 : 220;
+      const stillDist = desktop ? 550 : 380; // buffer where laptop stays still
       const pTrans = Math.min(1, Math.max(0, scrollY / transDist));
       const easeTrans = pTrans * (2 - pTrans); // smooth ease-out quad
 
@@ -213,16 +213,16 @@ function WorkView({ work }: { work: Work }) {
         prompt.style.opacity = `${Math.max(0, 1 - pTrans * 4)}`;
       }
 
-      // Top & bottom bars only fade in once the laptop has arrived at the left
-      const barsOpacity = Math.max(0, (pTrans - 0.7) / 0.3);
+      // Top & bottom bars fade in as laptop arrives at the left
+      const barsOpacity = Math.min(1, Math.max(0, (pTrans - 0.5) / 0.4));
       topBar.style.opacity = `${barsOpacity}`;
       bottomBar.style.opacity = `${barsOpacity}`;
 
-      // Right case study fades in & slides in smoothly as transition completes
-      const rightOpacity = Math.max(0, (pTrans - 0.1) / 0.9);
+      // Right case study fades in quickly so text is 100% opaque, crisp, and high-contrast
+      const rightOpacity = Math.min(1, Math.max(0, pTrans * 3.5));
       right.style.opacity = `${rightOpacity}`;
       if (desktop) {
-        const slideX = (1 - easeTrans) * 40;
+        const slideX = (1 - easeTrans) * 30;
         // Pin the right column at top:0 during the entrance so its title and top content
         // are NEVER scrolled off-screen or hidden before the user can read them!
         const translateY = Math.min(scrollY, transDist);
@@ -326,20 +326,20 @@ function WorkView({ work }: { work: Work }) {
         <div ref={rightRef} className="bg-paper relative flex shrink-0 flex-col lg:basis-[52%] lg:pb-[450px]">
           {/* lead */}
           <div className="border-b border-primary/40 p-6 md:p-10 lg:p-12">
-            <span className="kicker block opacity-60">The work</span>
-            <h2 className="mt-5 text-3xl font-bold leading-[0.95] tracking-tight sm:text-5xl">{work.title}</h2>
-            <p className="mt-5 max-w-[34ch] text-lg leading-snug opacity-90 md:text-xl">{work.excerpt}</p>
-            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] opacity-75">
-              <span className="border border-primary/40 px-2 py-0.5 font-bold uppercase tracking-wider">
+            <span className="kicker block text-primary/75 font-semibold">The work</span>
+            <h2 className="mt-4 text-3xl font-bold leading-[1.05] tracking-tight sm:text-5xl text-primary">{work.title}</h2>
+            <p className="mt-5 max-w-2xl text-lg font-normal leading-relaxed text-primary md:text-xl">{work.excerpt}</p>
+            <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] text-primary/85">
+              <span className="border border-primary/50 bg-primary/5 px-2.5 py-0.5 font-bold uppercase tracking-wider text-primary">
                 {work.statusBadge}
               </span>
               <span>{work.status}</span>
               <span className="opacity-40">•</span>
               <span>{work.year}</span>
             </div>
-            <div className="mt-6 flex flex-wrap gap-1.5">
+            <div className="mt-6 flex flex-wrap gap-2">
               {work.tags.map((tag) => (
-                <span key={tag} className="border border-primary/40 px-2 py-0.5 text-[9px] uppercase">
+                <span key={tag} className="border border-primary/40 bg-primary/[0.03] px-2.5 py-1 text-[10px] font-mono tracking-wider uppercase text-primary">
                   {tag}
                 </span>
               ))}
@@ -349,25 +349,25 @@ function WorkView({ work }: { work: Work }) {
           {/* Problem & Solution Dual Columns */}
           <div className="grid grid-cols-1 divide-y divide-primary/50 border-b border-primary/50 md:grid-cols-2 md:divide-x md:divide-y-0">
             <div className="bg-primary/[0.02] p-6 md:p-8">
-              <span className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
+              <span className="mb-3 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
                 01 // The Problem
               </span>
-              <p className="text-sm leading-relaxed opacity-90 md:text-base">{work.problem}</p>
+              <p className="text-sm font-normal leading-relaxed text-primary md:text-base">{work.problem}</p>
             </div>
             <div className="bg-primary/[0.04] p-6 md:p-8">
-              <span className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
+              <span className="mb-3 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
                 02 // The Solution
               </span>
-              <p className="text-sm leading-relaxed opacity-90 md:text-base">{work.solution}</p>
+              <p className="text-sm font-normal leading-relaxed text-primary md:text-base">{work.solution}</p>
             </div>
           </div>
 
           {/* Detailed Narrative Paragraphs */}
           <div className="border-b border-primary/50 p-6 md:p-10 lg:p-12">
-            <span className="mb-6 block font-mono text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
+            <span className="mb-6 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
               03 // Engineering Deep Dive
             </span>
-            <div className="space-y-6 text-base leading-relaxed opacity-90 md:text-lg">
+            <div className="space-y-6 text-base font-normal leading-relaxed text-primary md:text-lg">
               {work.body.map((p, idx) => (
                 <p key={idx}>{p}</p>
               ))}
@@ -377,48 +377,48 @@ function WorkView({ work }: { work: Work }) {
           {/* Architecture Matrix */}
           <div className="border-b border-primary/50">
             <div className="border-b border-primary/50 bg-primary/[0.02] p-6 md:p-8">
-              <span className="mb-1 block font-mono text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
+              <span className="mb-1 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
                 04 // Architecture Stack
               </span>
-              <h2 className="text-2xl font-bold tracking-tight">System Components</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-primary">System Components</h2>
             </div>
             <div className="grid grid-cols-1 divide-y divide-primary/50 border-b border-primary/50 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
               {work.architecture.frontend && (
                 <div className="border-b border-primary/50 p-6 sm:border-b-0">
-                  <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase opacity-70">
+                  <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase text-primary/80">
                     <FileCode2 className="h-4 w-4" />
                     <span>Client / UI</span>
                   </div>
-                  <p className="font-mono text-sm leading-relaxed">{work.architecture.frontend}</p>
+                  <p className="font-mono text-sm leading-relaxed text-primary">{work.architecture.frontend}</p>
                 </div>
               )}
               {work.architecture.backend && (
                 <div className="p-6">
-                  <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase opacity-70">
+                  <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase text-primary/80">
                     <Terminal className="h-4 w-4" />
                     <span>Backend & API</span>
                   </div>
-                  <p className="font-mono text-sm leading-relaxed">{work.architecture.backend}</p>
+                  <p className="font-mono text-sm leading-relaxed text-primary">{work.architecture.backend}</p>
                 </div>
               )}
             </div>
             <div className="grid grid-cols-1 divide-y divide-primary/50 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
               {work.architecture.database && (
                 <div className="border-b border-primary/50 p-6 sm:border-b-0">
-                  <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase opacity-70">
+                  <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase text-primary/80">
                     <Database className="h-4 w-4" />
                     <span>Data & Storage</span>
                   </div>
-                  <p className="font-mono text-sm leading-relaxed">{work.architecture.database}</p>
+                  <p className="font-mono text-sm leading-relaxed text-primary">{work.architecture.database}</p>
                 </div>
               )}
               {work.architecture.services && (
                 <div className="p-6">
-                  <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase opacity-70">
+                  <div className="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase text-primary/80">
                     <Cpu className="h-4 w-4" />
                     <span>Protocols / Services</span>
                   </div>
-                  <p className="font-mono text-sm leading-relaxed">{work.architecture.services}</p>
+                  <p className="font-mono text-sm leading-relaxed text-primary">{work.architecture.services}</p>
                 </div>
               )}
             </div>
@@ -426,14 +426,14 @@ function WorkView({ work }: { work: Work }) {
 
           {/* Key Implemented Features */}
           <div className="border-b border-primary/50 p-6 md:p-10 lg:p-12">
-            <span className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
+            <span className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
               05 // Capabilities
             </span>
-            <h2 className="mb-6 text-2xl font-bold tracking-tight md:text-3xl">Core Implemented Features</h2>
+            <h2 className="mb-6 text-2xl font-bold tracking-tight text-primary md:text-3xl">Core Implemented Features</h2>
             <ul className="grid grid-cols-1 gap-3.5">
               {work.keyFeatures.map((feat, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm leading-relaxed md:text-base">
-                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 opacity-80" />
+                <li key={i} className="flex items-start gap-3 text-sm font-normal leading-relaxed text-primary md:text-base">
+                  <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-primary/85" />
                   <span>{feat}</span>
                 </li>
               ))}
@@ -442,11 +442,11 @@ function WorkView({ work }: { work: Work }) {
 
           {/* Technical Challenge & Lessons Learned */}
           <div className="border-b border-primary/50 bg-primary/[0.02] p-6 md:p-10 lg:p-12">
-            <span className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
+            <span className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
               06 // Technical Challenge & Retrospective
             </span>
-            <h2 className="mb-4 text-2xl font-bold tracking-tight">Overcoming Bottlenecks</h2>
-            <p className="text-base leading-relaxed opacity-90 md:text-lg">{work.challenges}</p>
+            <h2 className="mb-4 text-2xl font-bold tracking-tight text-primary">Overcoming Bottlenecks</h2>
+            <p className="text-base font-normal leading-relaxed text-primary md:text-lg">{work.challenges}</p>
           </div>
 
           {/* Truthful Safety Note / Disclaimer */}
