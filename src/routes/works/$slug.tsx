@@ -122,7 +122,6 @@ function WorkView({ work }: { work: Work }) {
     window.scrollTo(0, 0);
     html.dataset.intro = "on"; // parks the site header above the viewport
     Object.assign(s, { draw: 0, screen: 1, ...HERO_POSE, y: 1.2, scale: HERO_SCALE });
-    left.classList.remove("bg-paper");
 
     gsap.set(title, { opacity: 0, y: 25 });
     if (prompt) gsap.set(prompt, { opacity: 0 });
@@ -207,24 +206,27 @@ function WorkView({ work }: { work: Work }) {
         left.style.height = `${mobileHeight}px`;
       }
 
-      // Title & prompt fade out
-      title.style.opacity = `${Math.max(0, 1 - pTrans * 1.5)}`;
-      title.style.transform = `translate3d(0, ${-pTrans * 40}px, 0)`;
+      // Title & prompt fade out immediately when scroll begins
+      title.style.opacity = `${Math.max(0, 1 - pTrans * 4)}`;
+      title.style.transform = `translate3d(0, ${-pTrans * 30}px, 0)`;
       if (prompt) {
-        prompt.style.opacity = `${Math.max(0, 1 - pTrans * 3)}`;
+        prompt.style.opacity = `${Math.max(0, 1 - pTrans * 4)}`;
       }
 
-      // Top & bottom bars fade in as laptop glides to the left
-      const barsOpacity = Math.max(0, (pTrans - 0.4) / 0.6);
+      // Top & bottom bars only fade in once the laptop has arrived at the left
+      const barsOpacity = Math.max(0, (pTrans - 0.7) / 0.3);
       topBar.style.opacity = `${barsOpacity}`;
       bottomBar.style.opacity = `${barsOpacity}`;
 
       // Right case study fades in & slides in smoothly as transition completes
-      const rightOpacity = Math.max(0, (pTrans - 0.15) / 0.85);
+      const rightOpacity = Math.max(0, (pTrans - 0.1) / 0.9);
       right.style.opacity = `${rightOpacity}`;
       if (desktop) {
         const slideX = (1 - easeTrans) * 40;
-        right.style.transform = `translate3d(${slideX}px, 0, 0)`;
+        // Pin the right column at top:0 during the entrance so its title and top content
+        // are NEVER scrolled off-screen or hidden before the user can read them!
+        const translateY = Math.min(scrollY, transDist);
+        right.style.transform = `translate3d(${slideX}px, ${translateY}px, 0)`;
       } else {
         right.style.transform = "none";
       }
@@ -309,7 +311,7 @@ function WorkView({ work }: { work: Work }) {
 
           <div
             ref={topBarRef}
-            className="absolute inset-x-0 top-0 flex items-center justify-between gap-4 border-b border-primary/40 px-5 py-4 md:px-6"
+            className="absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-4 border-b border-primary/40 bg-paper px-5 py-4 md:px-6"
           >
             <span className="kicker font-bold">{work.shortTitle}</span>
             <span className="kicker text-right opacity-60">{work.kind}</span>
@@ -321,7 +323,7 @@ function WorkView({ work }: { work: Work }) {
         </div>
 
         {/* ───────────── RIGHT: scrolling case study ───────────── */}
-        <div ref={rightRef} className="bg-paper relative flex shrink-0 flex-col lg:basis-[52%]">
+        <div ref={rightRef} className="bg-paper relative flex shrink-0 flex-col lg:basis-[52%] lg:pb-[450px]">
           {/* lead */}
           <div className="border-b border-primary/40 p-6 md:p-10 lg:p-12">
             <span className="kicker block opacity-60">The work</span>

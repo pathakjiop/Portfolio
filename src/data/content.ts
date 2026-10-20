@@ -320,8 +320,8 @@ export const works: Work[] = [
       "Proximity-based audio and dialogue bubbles rendered above NPC heads",
     ],
     challenges: "Bridging synchronous Minecraft game ticks (20 TPS) with asynchronous external LLM API latencies. We implemented an asynchronous event queue in Java that queues player requests without freezing the server main thread.",
-    cover: "/media/minecraft_office.png",
-    gallery: ["/media/minecraft_office.png"],
+    cover: "/media/minecraft_office.webp",
+    gallery: ["/media/minecraft_office.webp"],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/minecraft-office" },
       { label: "DEMO OVERVIEW", meta: "Video Demo", href: "#" },

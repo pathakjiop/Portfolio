@@ -686,7 +686,7 @@ function About() {
               ref={heroImgRef}
               src={IMG_HERO}
               alt="Atharv Pathak sitting on the line"
-              className="absolute bottom-0 right-[-8px] sm:right-[-12px] md:right-[-18px] lg:right-[-24px] xl:right-[-32px] translate-y-[31.5%] h-[520px] sm:h-[600px] md:h-[730px] lg:h-[840px] xl:h-[920px] w-auto max-w-none object-contain pointer-events-none select-none z-30 sit-shadow will-change-transform"
+              className="absolute bottom-0.5 right-[-8px] sm:right-[-12px] md:right-[-18px] lg:right-[-24px] xl:right-[-32px] translate-y-[31.5%] h-[520px] sm:h-[600px] md:h-[730px] lg:h-[840px] xl:h-[920px] w-auto max-w-none object-contain pointer-events-none select-none z-30 sit-shadow will-change-transform"
             />
           </div>
         </div>

@@ -168,13 +168,13 @@ export function SiteFrame({ children }: { children: ReactNode }) {
         ))}
       </div>
 
-      <header className="site-header fixed inset-x-0 top-0 z-30 grid h-14 grid-cols-4 border-b border-primary/40 bg-paper md:h-16 md:grid-cols-12">
+      <header className="site-header fixed inset-x-0 top-0 z-50 grid h-14 grid-cols-4 border-b border-primary/40 bg-paper md:h-16 md:grid-cols-12">
         <Link
           to="/"
           aria-label="Atharv Pathak home"
           className="col-span-2 flex items-center border-r border-primary/40 px-4 md:col-span-3"
         >
-          <span className="wordmark font-bold text-2xl tracking-tighter">Namste.</span>
+          <span className="wordmark font-bold text-2xl tracking-tighter">Namaste.</span>
         </Link>
         <div className="hidden border-r border-primary/40 md:col-span-6 md:block">
           <ClockMarquee />
@@ -277,7 +277,7 @@ export function ShibuyaBlock() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setShouldLoad(true);
-          videoRef.current?.play().catch(() => {});
+          videoRef.current?.play().catch(() => { });
         } else {
           videoRef.current?.pause();
         }
@@ -354,8 +354,8 @@ export function Footer() {
         </div>
       </div>
       <div className="footer-wordmark-container overflow-hidden border-t border-paper/30 pt-4 px-4 md:px-8">
-        <div className="wordmark-xl footer-wordmark inline-block w-full overflow-hidden" role="img" aria-label="Namste.">
-          {"Namste.".split("").map((char, idx) => (
+        <div className="wordmark-xl footer-wordmark inline-block w-full overflow-hidden" role="img" aria-label="Namaste.">
+          {"Namaste.".split("").map((char, idx) => (
             <span
               key={idx}
               className="footer-wordmark-char inline-block will-change-transform"

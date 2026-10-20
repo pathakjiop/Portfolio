@@ -379,7 +379,9 @@ html.dark .intro-root,
 
 /* header is parked above the viewport while the intro runs, then slides in */
 .site-header {
+  background-color: var(--color-paper);
   transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 50;
 }
 
 html[data-intro="on"] .site-header {
