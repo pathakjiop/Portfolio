@@ -3,11 +3,11 @@ import { useGLTF } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
-const SCREEN_W = 1.86;
-const SCREEN_H = 1.30;
+const SCREEN_W = 1.77;
+const SCREEN_H = 1.238;
 
 function ModelContent({ cover, isDark }: { cover?: string; isDark: boolean }) {
-  const modelUrl = isDark ? "/model/laptop_lines_f5b841.glb" : "/model/laptop_lines_6a041d.glb";
+  const modelUrl = isDark ? "/model/laptop_lines_dad2d8.glb" : "/model/laptop_lines_143642.glb";
   const { scene } = useGLTF(modelUrl);
   const cloned = useMemo(() => scene.clone(true), [scene]);
   const groupRef = useRef<THREE.Group>(null);
@@ -20,18 +20,10 @@ function ModelContent({ cover, isDark }: { cover?: string; isDark: boolean }) {
       if (!alive) return;
       t.colorSpace = THREE.SRGBColorSpace;
       t.generateMipmaps = true;
-      const img = t.image as { width: number; height: number } | undefined;
-      if (img?.width && img?.height) {
-        const screenAspect = SCREEN_W / SCREEN_H;
-        const imgAspect = img.width / img.height;
-        if (imgAspect > screenAspect) {
-          t.repeat.x = screenAspect / imgAspect;
-          t.offset.x = (1 - t.repeat.x) / 2;
-        } else {
-          t.repeat.y = imgAspect / screenAspect;
-          t.offset.y = (1 - t.repeat.y) / 2;
-        }
-      }
+      t.wrapS = THREE.ClampToEdgeWrapping;
+      t.wrapT = THREE.ClampToEdgeWrapping;
+      t.repeat.set(1, 1);
+      t.offset.set(0, 0);
       t.needsUpdate = true;
       setTex(t);
     });
@@ -51,13 +43,15 @@ function ModelContent({ cover, isDark }: { cover?: string; isDark: boolean }) {
   return (
     <group ref={groupRef} scale={1.5}>
       <primitive object={cloned} />
-      <mesh position={[-0.0195, 0.032, -0.812]} rotation={[-0.2576, 0, 0]} renderOrder={-1}>
+      <mesh position={[-0.015, 0.026, -0.803]} rotation={[-0.2577, 0, 0]} renderOrder={-1}>
         <planeGeometry args={[SCREEN_W, SCREEN_H]} />
         <meshBasicMaterial
+          key={tex?.uuid ?? "no-tex"}
           map={tex ?? undefined}
           color="#ffffff"
           toneMapped={false}
-          side={THREE.DoubleSide}
+          side={THREE.FrontSide}
+          depthWrite={true}
         />
       </mesh>
     </group>
@@ -96,5 +90,5 @@ export function LaptopModel({
   );
 }
 
-useGLTF.preload("/model/laptop_lines_6a041d.glb");
-useGLTF.preload("/model/laptop_lines_f5b841.glb");
+useGLTF.preload("/model/laptop_lines_143642.glb");
+useGLTF.preload("/model/laptop_lines_dad2d8.glb");

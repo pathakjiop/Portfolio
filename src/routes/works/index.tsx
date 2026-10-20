@@ -42,7 +42,7 @@ export function WorksPage() {
   const [query, setQuery] = useState("");
 
   const featured = useMemo(
-    () => works.find((work) => work.slug === "uai") ?? works[0],
+    () => works.find((work) => work.featured) ?? works[0],
     [],
   );
 

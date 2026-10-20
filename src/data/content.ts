@@ -159,49 +159,6 @@ export const filters = [
 
 export const works: Work[] = [
   {
-    slug: "uai",
-    title: "UAI — Unified Authentication Interface",
-    shortTitle: "UAI",
-    subtitle: "UPI-Inspired Identity & Selective Disclosure Auth Protocol",
-    kind: "IDENTITY PROTOCOL / FULL-STACK",
-    statusBadge: "ACTIVE BUILD",
-    status: "Flagship Prototype & Identity Architecture",
-    year: "2026",
-    tags: ["IDENTITY", "OIDC/JWT", "FASTAPI", "REACT NATIVE"],
-    filterCategories: ["Full-Stack", "Backend & APIs", "Systems & Tools"],
-    excerpt: "A unified authentication protocol inspired by UPI, enabling citizen identity wallets to authenticate with service providers via QR codes with strict selective disclosure.",
-    body: [
-      "UAI (Unified Authentication Interface) reimagines digital identity and authentication with the sheer elegance and ubiquity of India's UPI payments system. Instead of sharing unvetted physical identity documents or logging in with opaque third-party trackers, a user owns a unique UAI ID (e.g. username@uai.in) linked to a cryptographically verifiable wallet.",
-      "The system cleanly bifurcates into two distinct surfaces: the citizen-facing mobile identity wallet (for credential storage, consent review, and QR scanning) and the service-provider management portal (for registering business endpoints, issuing permanent counter QRs, and auditing access event streams).",
-      "When a citizen interacts with a merchant or service provider, the provider presents a dynamic or permanent QR code. The citizen reviews the specific data attributes requested (e.g. age verification vs. full birthdate) and grants granular consent. The server verifies the signature and registers an audit log without storing unnecessary citizen attributes."
-    ],
-    problem: "Citizens constantly hand over unredacted physical identity documents (Aadhaar, licenses, IDs) for trivial checks (age verification, building entry), causing massive data leakage and identity theft. Current digital auth systems are fragmented and lack minimal-disclosure guarantees.",
-    solution: "A two-tier identity framework providing UPI-like convenience: permanent/dynamic QR codes, verifiable credentials, biometric wallet authorization, and an API-backed selective disclosure engine.",
-    architecture: {
-      frontend: "React (Provider Portal) & React Native / Expo (Citizen Identity Wallet) with TypeScript",
-      backend: "Python / FastAPI with JWT, OAuth 2.0 / OpenID Connect (OIDC) core services",
-      database: "PostgreSQL with audit trails and cryptographically hashed access logs",
-      services: "Verifiable Credential (VC) and DID protocols, ESP32 counter display integration",
-    },
-    keyFeatures: [
-      "Unique UAI ID generation and real-time namespace availability resolution",
-      "QR-based authentication separating permanent merchant QRs from ephemeral challenge tokens",
-      "Selective disclosure: disclose 'Age ≥ 21' without revealing birthdate or residential address",
-      "Hardware-backed mobile wallet with biometric unlock (Face ID / Fingerprint)",
-      "Service provider registration portal with access logs and printable merchant QR generators",
-      "Architectural foundation for DigiLocker credential validation integration",
-    ],
-    challenges: "The key challenge was distinguishing between offline QR presentation and authoritative online verification. A static QR can initiate a workflow, but cannot cryptographically prove credential validity without a network-backed challenge-response handshake.",
-    safetyNote: "UAI explores verifiable credentials and minimal disclosure. It represents an engineering design and prototype; legal or governmental identity recognition is subject to regulatory compliance.",
-    cover: "/media/uai-cover.jpg",
-    gallery: ["/media/uai-cover.jpg"],
-    links: [
-      { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/uai" },
-      { label: "ARCHITECTURE DOCS", meta: "Specification", href: "#" },
-    ],
-    featured: true,
-  },
-  {
     slug: "medishot",
     title: "MediShot — Medicine Vision & Understanding",
     shortTitle: "MediShot",
@@ -535,46 +492,6 @@ export const works: Work[] = [
     ],
     featured: false,
   },
-  {
-    slug: "esp32-display",
-    title: "UAI QR / ESP32 Hardware Prototype",
-    shortTitle: "ESP32 Display",
-    subtitle: "Embedded Hardware Prototype for Counter Auth QRs",
-    kind: "EMBEDDED HARDWARE / IOT",
-    statusBadge: "PROTOTYPE",
-    status: "Hardware Experiment & Prototype",
-    year: "2026",
-    tags: ["C++", "ESP32", "ARDUINO", "OLED"],
-    filterCategories: ["Systems & Tools"],
-    excerpt: "An embedded hardware prototype using ESP32, SSD1306 OLED, and sensors to render dynamic provider QR codes for physical merchant checkout counters.",
-    body: [
-      "To bridge UAI's digital authentication protocol with physical, real-world counters (hotel check-in desks, hospital registration counters, bank branches), this hardware prototype explores dedicated, low-cost hardware QR displays.",
-      "Built on the ESP32 microcontroller with an SSD1306 OLED display, the firmware handles serial initialization, dynamic QR bitmap rendering, and environment telemetry (DHT11 temperature/humidity sensing for counter health).",
-      "This experiment clarifies a crucial engineering principle: while an ESP32 can display a counter QR code, actual identity verification and audit trails remain the sole domain of the secure UAI backend network flow."
-    ],
-    problem: "Paper QR codes at physical merchant counters are prone to physical tampering or replacement, and cannot refresh authentication challenge tokens dynamically.",
-    solution: "An ESP32-powered micro-device that dynamically renders fresh challenge QR codes and displays real-time connection status.",
-    architecture: {
-      frontend: "SSD1306 0.96-inch OLED I2C monochrome display",
-      backend: "Embedded C/C++ firmware compiled with Arduino ESP32 core",
-      database: "Non-volatile SPIFFS storage on ESP32 flash",
-      services: "Serial monitor telemetry, WiFi station connectivity",
-    },
-    keyFeatures: [
-      "Dynamic bitmap rendering of QR codes on SSD1306 OLED display via I2C",
-      "ESP32 WiFi station connectivity for polling merchant session tokens",
-      "Serial debugging and fail-safe boot recovery routines",
-      "Integrated DHT11 environmental sensor for device health monitoring",
-      "Modular firmware architecture with explicit separation of setup and loop states",
-    ],
-    challenges: "Memory-constrained QR rendering on the SSD1306 buffer while maintaining responsive I2C communication and Wi-Fi handshakes without watchdog timer resets.",
-    cover: "/media/sit.png",
-    gallery: ["/media/sit.png"],
-    links: [
-      { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/esp32-display" },
-    ],
-    featured: false,
-  },
 ];
 
 // Additional lab experiments and utilities from project.md
@@ -639,7 +556,6 @@ export const utilityProjects: UtilityProject[] = [
 ];
 
 export const selectedSlugs = [
-  "uai",
   "medishot",
   "argus",
   "minecraft-office",

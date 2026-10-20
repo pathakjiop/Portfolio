@@ -4,7 +4,7 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 /**
- * Wireframe laptop powered by laptop_lines_6a041d.glb (light) and laptop_lines_f5b841.glb (dark).
+ * Wireframe laptop powered by laptop_lines_143642.glb (light) and laptop_lines_dad2d8.glb (dark).
  *
  * All motion is driven through one plain mutable object (`LaptopState`) so the page can animate it
  * with GSAP (intro) and with scroll (spin) without re-rendering React every frame.
@@ -22,8 +22,8 @@ export type LaptopState = {
 };
 
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
-const SCREEN_W = 1.86;
-const SCREEN_H = 1.30;
+const SCREEN_W = 1.77;
+const SCREEN_H = 1.238;
 
 function useCoverTexture(url?: string) {
   const [tex, setTex] = useState<THREE.Texture | null>(null);
@@ -42,19 +42,10 @@ function useCoverTexture(url?: string) {
         t.generateMipmaps = true;
         t.minFilter = THREE.LinearMipmapLinearFilter;
         t.magFilter = THREE.LinearFilter;
-        // "object-fit: cover" for the screen rectangle
-        const img = t.image as { width: number; height: number } | undefined;
-        if (img?.width && img?.height) {
-          const screenAspect = SCREEN_W / SCREEN_H;
-          const imgAspect = img.width / img.height;
-          if (imgAspect > screenAspect) {
-            t.repeat.x = screenAspect / imgAspect;
-            t.offset.x = (1 - t.repeat.x) / 2;
-          } else {
-            t.repeat.y = imgAspect / screenAspect;
-            t.offset.y = (1 - t.repeat.y) / 2;
-          }
-        }
+        t.wrapS = THREE.ClampToEdgeWrapping;
+        t.wrapT = THREE.ClampToEdgeWrapping;
+        t.repeat.set(1, 1);
+        t.offset.set(0, 0);
         t.needsUpdate = true;
         setTex(t);
       },
@@ -77,7 +68,7 @@ type SceneProps = {
 };
 
 function Scene({ state, cover, isDark }: SceneProps) {
-  const modelUrl = isDark ? "/model/laptop_lines_f5b841.glb" : "/model/laptop_lines_6a041d.glb";
+  const modelUrl = isDark ? "/model/laptop_lines_dad2d8.glb" : "/model/laptop_lines_143642.glb";
   const { scene } = useGLTF(modelUrl);
   const cloned = useMemo(() => scene.clone(true), [scene]);
   const root = useRef<THREE.Group>(null);
@@ -108,10 +99,22 @@ function Scene({ state, cover, isDark }: SceneProps) {
     }
   }, [tex]);
 
-  useFrame((_, dt) => {
+  useFrame((threeState, dt) => {
     const s = state.current;
     const g = root.current;
     if (!g) return;
+
+    // Keep Three.js canvas size and camera aspect immediately in sync with DOM container
+    const canvas = threeState.gl.domElement;
+    const parent = canvas.parentElement;
+    if (parent) {
+      const rect = parent.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        if (Math.abs(threeState.size.width - rect.width) > 1 || Math.abs(threeState.size.height - rect.height) > 1) {
+          threeState.setSize(rect.width, rect.height);
+        }
+      }
+    }
 
     // light damping so scroll-driven turning feels weighted, not mechanical
     const k = 1 - Math.exp(-12 * Math.min(dt, 0.05));
@@ -129,9 +132,10 @@ function Scene({ state, cover, isDark }: SceneProps) {
     g.scale.setScalar(sh.scale * 1.55);
 
     // Line drawing animation via geometry draw range
-    if (linesObj?.geometry?.index) {
-      const total = linesObj.geometry.index.count;
-      linesObj.geometry.setDrawRange(0, Math.floor(clamp01(s.draw) * total));
+    const geom = (linesObj as any)?.geometry;
+    if (geom?.index) {
+      const total = geom.index.count;
+      geom.setDrawRange(0, Math.floor(clamp01(s.draw) * total));
     }
 
     if (screenMat.current) {
@@ -142,18 +146,19 @@ function Scene({ state, cover, isDark }: SceneProps) {
   return (
     <group ref={root}>
       <primitive object={cloned} />
-      {/* Front screen quad aligned to the GLB laptop lid display */}
-      <mesh position={[-0.0195, 0.032, -0.812]} rotation={[-0.2576, 0, 0]} renderOrder={-1}>
+      {/* Front screen quad precisely aligned to the GLB laptop lid display opening */}
+      <mesh position={[-0.015, 0.026, -0.803]} rotation={[-0.2577, 0, 0]} renderOrder={-1}>
         <planeGeometry args={[SCREEN_W, SCREEN_H]} />
         <meshBasicMaterial
           ref={screenMat}
+          key={tex?.uuid ?? "no-tex"}
           map={tex ?? undefined}
           color="#ffffff"
           transparent
           opacity={0}
-          depthWrite={false}
+          depthWrite={true}
           toneMapped={false}
-          side={THREE.DoubleSide}
+          side={THREE.FrontSide}
         />
       </mesh>
     </group>
@@ -161,8 +166,8 @@ function Scene({ state, cover, isDark }: SceneProps) {
 }
 
 // Preload models for immediate display
-useGLTF.preload("/model/laptop_lines_6a041d.glb");
-useGLTF.preload("/model/laptop_lines_f5b841.glb");
+useGLTF.preload("/model/laptop_lines_143642.glb");
+useGLTF.preload("/model/laptop_lines_dad2d8.glb");
 
 type Props = {
   state: MutableRefObject<LaptopState>;

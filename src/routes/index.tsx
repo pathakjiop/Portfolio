@@ -273,7 +273,7 @@ function Home() {
             </div>
             <div ref={targetRef} className="mt-[clamp(24px,6vw,80px)] border-y border-primary/50 aspect-[16/9]"></div>
             <div ref={frameRef} className="absolute left-0 top-0 overflow-hidden pointer-events-none bg-black">
-              <img ref={imgRef} alt="Atharv Pathak" src="/media/main.jpg" className="block w-full h-full object-cover" />
+              <img ref={imgRef} alt="Atharv Pathak" src="/media/main.jpg" className="block w-full h-full object-cover object-top origin-top" />
             </div>
           </div>
         </div>

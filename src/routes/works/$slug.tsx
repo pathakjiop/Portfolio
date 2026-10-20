@@ -79,10 +79,12 @@ export function WorkPage() {
   return <WorkView key={work.slug} work={work} />;
 }
 
-const HERO_Y = -0.65;
+const HERO_Y = -0.34;
 const SETTLED_Y = 0;
-const HERO_SCALE = 1.08;
+const HERO_SCALE = 0.98;
 const SETTLED_SCALE = 0.92;
+
+const isDesktop = () => (typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : true);
 
 function WorkView({ work }: { work: Work }) {
   const nextWork = getNextWork(work.slug);
@@ -96,7 +98,7 @@ function WorkView({ work }: { work: Work }) {
   const scrollPromptRef = useRef<HTMLDivElement>(null);
 
   // Everything the laptop does is driven through this one object (GSAP during entrance, scroll after).
-  const laptop = useRef<LaptopState>({ draw: 0, screen: 0, ...HERO_POSE, y: 1.2, scale: HERO_SCALE });
+  const laptop = useRef<LaptopState>({ draw: 0, screen: 1, ...HERO_POSE, y: 1.2, scale: HERO_SCALE });
   const introDone = useRef(false);
 
   /* ---------------------------------------------------------------- intro */
@@ -111,7 +113,7 @@ function WorkView({ work }: { work: Work }) {
 
     const html = document.documentElement;
     const s = laptop.current;
-    const desktop = window.innerWidth >= 1024;
+    const desktop = isDesktop();
     const header = headerHeight();
     const viewport = window.innerHeight - header;
 
@@ -119,7 +121,7 @@ function WorkView({ work }: { work: Work }) {
     introDone.current = false;
     window.scrollTo(0, 0);
     html.dataset.intro = "on"; // parks the site header above the viewport
-    Object.assign(s, { draw: 0, screen: 0, ...HERO_POSE, y: 1.2, scale: HERO_SCALE });
+    Object.assign(s, { draw: 0, screen: 1, ...HERO_POSE, y: 1.2, scale: HERO_SCALE });
     left.classList.remove("bg-paper");
 
     gsap.set(title, { opacity: 0, y: 25 });
@@ -135,7 +137,7 @@ function WorkView({ work }: { work: Work }) {
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       delete html.dataset.intro;
-      Object.assign(s, { draw: 1, screen: 0, y: HERO_Y, scale: HERO_SCALE });
+      Object.assign(s, { draw: 1, screen: 1, y: HERO_Y, scale: HERO_SCALE });
       gsap.set(title, { opacity: 1, y: 0 });
       if (prompt) gsap.set(prompt, { opacity: 0.7 });
       introDone.current = true;
@@ -184,7 +186,7 @@ function WorkView({ work }: { work: Work }) {
       const prompt = scrollPromptRef.current;
       if (!left || !right || !title || !topBar || !bottomBar) return;
 
-      const desktop = window.innerWidth >= 1024;
+      const desktop = isDesktop();
       const header = headerHeight();
       const viewport = window.innerHeight - header;
       const scrollY = Math.max(0, window.scrollY);
@@ -217,20 +219,19 @@ function WorkView({ work }: { work: Work }) {
       topBar.style.opacity = `${barsOpacity}`;
       bottomBar.style.opacity = `${barsOpacity}`;
 
-      // Right case study fades in & stays anchored until transition finishes
+      // Right case study fades in & slides in smoothly as transition completes
       const rightOpacity = Math.max(0, (pTrans - 0.15) / 0.85);
       right.style.opacity = `${rightOpacity}`;
-      const pinnedY = Math.min(scrollY, transDist);
       if (desktop) {
         const slideX = (1 - easeTrans) * 40;
-        right.style.transform = `translate3d(${slideX}px, ${pinnedY}px, 0)`;
+        right.style.transform = `translate3d(${slideX}px, 0, 0)`;
       } else {
-        right.style.transform = `translate3d(0, ${pinnedY}px, 0)`;
+        right.style.transform = "none";
       }
 
       const s = laptop.current;
-      // Screen image fades in on the laptop screen as it moves left
-      s.screen = Math.min(1, Math.max(0, (pTrans - 0.15) / 0.85));
+      // Screen image remains active on the display
+      s.screen = 1;
 
       if (pTrans < 1) {
         // Gliding to left: Laptop moves from hero straight-on pose to settled side pose
@@ -287,12 +288,12 @@ function WorkView({ work }: { work: Work }) {
           {/* big title card (start only) */}
           <div
             ref={titleRef}
-            className="pointer-events-none absolute inset-x-0 top-[10%] flex flex-col items-center justify-center px-6 text-center"
+            className="pointer-events-none absolute inset-x-0 top-5 z-20 flex flex-col items-center justify-center px-6 text-center md:top-7 lg:top-9"
           >
-            <h1 className="text-[clamp(3.4rem,9.5vw,9.5rem)] font-bold leading-[0.88] tracking-[-0.05em]">
+            <h1 className="text-[clamp(2.6rem,6.8vw,6.2rem)] font-bold leading-[0.9] tracking-[-0.05em]">
               {work.shortTitle}
             </h1>
-            <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.25em] opacity-60 md:text-xs">
+            <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.25em] opacity-65 md:text-xs">
               {work.kind}
             </p>
           </div>
@@ -300,9 +301,9 @@ function WorkView({ work }: { work: Work }) {
           {/* scroll cue */}
           <div
             ref={scrollPromptRef}
-            className="pointer-events-none absolute bottom-7 inset-x-0 flex flex-col items-center justify-center gap-1 opacity-70"
+            className="pointer-events-none absolute bottom-4 inset-x-0 z-20 flex flex-col items-center justify-center gap-0.5 opacity-70"
           >
-            <span className="font-mono text-[10px] uppercase tracking-[0.25em]">Scroll to explore</span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.25em]">Scroll to explore</span>
             <span className="text-xs animate-bounce">↓</span>
           </div>
 
@@ -316,11 +317,7 @@ function WorkView({ work }: { work: Work }) {
 
           <div
             ref={bottomBarRef}
-            className="absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-primary/40 px-5 py-3 md:px-6"
-          >
-            <span className="kicker opacity-60">Wireframe</span>
-            <span className="kicker opacity-60">Scroll to turn</span>
-          </div>
+          ></div>
         </div>
 
         {/* ───────────── RIGHT: scrolling case study ───────────── */}
@@ -543,7 +540,7 @@ function WorkView({ work }: { work: Work }) {
           </div>
 
           {/* back to all works */}
-          <div className="px-6 pb-16 pt-14 md:px-10 lg:px-12">
+          <div className="px-6 pb-16 pt-14 md:px-10 lg:px-12 border-b border-primary/40">
             <span className="kicker block opacity-60">Back to the</span>
             <Link
               to="/works"

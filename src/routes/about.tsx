@@ -98,7 +98,7 @@ const toolkitCategories = [
       { name: "Hono", highlight: false, note: "Edge APIs" },
       { name: "Actix", highlight: false, note: "Rust Web" },
       { name: "Axum", highlight: false, note: "Modern Async" },
-      { name: "Verifiable Credentials", highlight: false, note: "UAI Concept" },
+      { name: "Verifiable Credentials", highlight: false, note: "Decentralized Auth" },
     ],
   },
   {
@@ -297,7 +297,7 @@ const learningRadar = [
   },
   {
     topic: "Identity & Verifiable Credentials (VCs / DIDs)",
-    detail: "Decentralized identifier workflows and unified QR authentication concepts inspired by UAI.",
+    detail: "Decentralized identifier workflows and minimal-disclosure verification protocols.",
   },
 ];
 
