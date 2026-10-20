@@ -335,16 +335,26 @@ details were limited.
 
 ### 10. Prompt Generator AI
 
-**Goal:** A web application that helps users create or refine prompts.
+**Goal:** A full-stack web application and API that generates structured prompts using a local LLM from structured frontend inputs.
 
-**Known stack:** React, Express, Node.js.
+**Repository:** `https://github.com/pathakjiop/Prompt-AI`
 
-**Likely product areas to document from the repository:** input form,
-prompt-generation logic, output formatting, API integration, and any
-saved prompt history. Do not claim a particular LLM provider or advanced
-prompt-engineering feature unless it is present in the code.
+**Verified stack:**
+- **Frontend:** React, JavaScript (`promptgenerator.js`)
+- **Backend:** Node.js, Express REST API (`app.js`, `promptRoutes.js`, `promptController.js`, `promptModel.js`)
+- **LLM Engine:** Local Ollama running Mistral 7B
 
-**Status:** Status to verify.
+**Core Flow & Architecture:**
+- User provides structured inputs across four key prompt dimensions:
+  1. **Role** (e.g., Software Engineer)
+  2. **Context** (e.g., working on a new project)
+  3. **Action** (e.g., design a scalable architecture)
+  4. **Instructions** (e.g., consider microservices and cloud deployment)
+- The Express backend controller processes the parameters, invokes the local Ollama Mistral 7B instance, and synthesizes a structured system prompt.
+- The generated prompt is returned to the React frontend for display, review, and copying.
+- Zero cloud API fees and complete data privacy by keeping prompt generation on local machine hardware.
+
+**Status:** Completed Prototype / Local Inference Build.
 
 ### 11. LeetCode Extension
 

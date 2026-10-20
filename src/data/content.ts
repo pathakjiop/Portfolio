@@ -534,6 +534,47 @@ export const works: Work[] = [
     ],
     featured: false,
   },
+  {
+    slug: "prompt-ai",
+    title: "Prompt Generator AI — Local LLM Prompt Synthesis",
+    shortTitle: "Prompt AI",
+    subtitle: "Structured System Prompt Builder Powered by Local Mistral 7B",
+    kind: "LOCAL AI / FULL-STACK PROMPT ENGINE",
+    statusBadge: "PROTOTYPE",
+    status: "Full-Stack AI Project & Local Inference Gateway",
+    year: "2025",
+    tags: ["OLLAMA", "MISTRAL 7B", "EXPRESS", "REACT", "NODE.JS"],
+    filterCategories: ["AI & ML", "Full-Stack", "Backend & APIs"],
+    excerpt: "A full-stack prompt engineering and generation studio pairing a React input interface with an Express backend connected to a local Ollama Mistral 7B engine for cost-free, private prompt synthesis.",
+    body: [
+      "Prompt Generator AI is a full-stack developer utility designed to streamline prompt engineering workflows. Rather than manually typing loose, unstructured queries into chat interfaces, users decompose prompt requirements into foundational prompt-engineering dimensions: Role, Context, Action, and Specific Instructions.",
+      "The React client captures structured input parameters and dispatches them to a modular Express.js backend. The API handles schema validation and routes prompt generation requests to a locally hosted Ollama runtime executing the Mistral 7B large language model.",
+      "By running Mistral 7B locally on device via Ollama, the application delivers instant, zero-cost prompt synthesis without transmitting sensitive proprietary instructions or user data to external cloud APIs.",
+    ],
+    problem: "Crafting high-quality system prompts for LLMs requires clear role boundaries, contextual constraints, and explicit instructions. Non-technical users often produce vague prompts with inconsistent AI outputs. Additionally, iterating on prompts through commercial cloud APIs incurs recurring token fees and risks exposing confidential instructions.",
+    solution: "An end-to-end web studio pairing an intuitive React input layout with an Express MVC backend that orchestrates prompt synthesis using a local Ollama Mistral 7B instance, guaranteeing data privacy and zero API expenses.",
+    architecture: {
+      frontend: "React.js with component-driven state architecture (promptgenerator.js) capturing Role, Context, Action, and Instructions",
+      backend: "Node.js & Express.js REST API with MVC pattern separation across routes, controllers, and models",
+      database: "Local in-memory schema and prompt data model (promptModel.js) for serialization and synthesis history",
+      services: "Local Ollama execution gateway serving quantized Mistral 7B parameter weights via local HTTP endpoints",
+    },
+    keyFeatures: [
+      "Structured prompt engineering interface decomposing tasks into Role, Context, Action, and Constraints",
+      "Local LLM orchestration powered by Ollama Mistral 7B for cost-free, private local inference",
+      "Decoupled Express.js architecture with dedicated routes, controllers, and prompt models",
+      "Real-time prompt rendering and one-click copyable system prompt output",
+      "Zero third-party cloud API dependencies, ensuring confidential instructions remain on-premise",
+      "Extensible controller pipeline capable of targeting alternative local models (Llama 3, Phi-3, Gemma)",
+    ],
+    challenges: "Integrating with local Ollama daemon endpoints while managing inference latency on consumer hardware. We implemented structured input sanitization and prompt template wrapping to ensure Mistral 7B consistently returns concise, ready-to-use prompt definitions.",
+    cover: "/media/prompt-ai-cover.jpg",
+    gallery: ["/media/prompt-ai-cover.jpg", "/media/prompt-ai-cover.png"],
+    links: [
+      { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/Prompt-AI" },
+    ],
+    featured: false,
+  },
 ];
 
 // Additional lab experiments and utilities from project.md
@@ -550,10 +591,10 @@ export const utilityProjects: UtilityProject[] = [
   {
     id: "prompt-gen",
     name: "Prompt Generator AI",
-    desc: "A web application that structures, refines, and formats high-efficiency system prompts for LLMs.",
-    tech: ["React", "Node.js", "Express"],
+    desc: "A full-stack application that structures, refines, and synthesizes high-efficiency system prompts using local Ollama Mistral 7B.",
+    tech: ["React", "Node.js", "Express", "Ollama", "Mistral 7B"],
     status: "Prototype",
-    link: "https://github.com/pathakjiop/",
+    link: "https://github.com/pathakjiop/Prompt-AI",
   },
   {
     id: "leetcode-ext",
