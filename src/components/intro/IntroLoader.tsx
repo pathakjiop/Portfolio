@@ -44,8 +44,8 @@ type Props = {
 };
 
 // ---- the photo that sits on the wall (must be the first quote slide of the hero) ----
-const PHOTO_LIGHT = "/media/qoutes/light/quote1.png?v=2";
-const PHOTO_DARK = "/media/qoutes/dark/quote1.png?v=2";
+const PHOTO_LIGHT = "/media/qoutes/light/quote1.webp?v=2";
+const PHOTO_DARK = "/media/qoutes/dark/quote1.webp?v=2";
 
 // ---- timeline (seconds) -----------------------------------------------------------
 const FREEZE_AT = 1.55; // park here until images are ready
@@ -409,6 +409,7 @@ export function IntroLoader({ heroRef, targetRef, assets = [], onReveal, onDone 
       if (u >= T_DONE) {
         finished = true;
         played = true;
+        window.dispatchEvent(new CustomEvent("introDone"));
         cb.current.onDone?.();
         return;
       }

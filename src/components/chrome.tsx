@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cities, socials } from "@/data/content";
 import { media } from "@/data/media";
 
@@ -265,13 +265,40 @@ export function SiteFrame({ children }: { children: ReactNode }) {
 export function ShibuyaBlock() {
   const src = media.shibuya || "/media/sea.mp4";
   const isVideo = src.endsWith(".mp4") || src.endsWith(".webm") || src.endsWith(".mov");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          videoRef.current?.play().catch(() => {});
+        } else {
+          videoRef.current?.pause();
+        }
+      },
+      { rootMargin: "350px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="footer-band-wrapper relative h-60 w-full overflow-hidden border-b border-paper/30 md:h-[35vh]">
+    <div
+      ref={containerRef}
+      className="footer-band-wrapper relative h-60 w-full overflow-hidden border-b border-paper/30 md:h-[35vh]"
+    >
       {isVideo ? (
         <video
-          src={src}
-          autoPlay
+          ref={videoRef}
+          src={shouldLoad ? src : undefined}
+          preload="none"
           muted
           loop
           playsInline
@@ -281,6 +308,7 @@ export function ShibuyaBlock() {
         <img
           src={src}
           alt="Footer band media"
+          loading="lazy"
           className="footer-band-img h-[125%] w-full object-cover object-center will-change-transform -translate-y-[10%]"
         />
       )}

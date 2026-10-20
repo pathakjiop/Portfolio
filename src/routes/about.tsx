@@ -41,10 +41,10 @@ export const Route = createFileRoute("/about")({
 /* ------------------------------------------------------------------ */
 /* ASSET PATHS                                                        */
 /* ------------------------------------------------------------------ */
-const IMG_HERO = "/media/sit.png";
-const IMG_ME = "/media/lift.jpeg";
+const IMG_HERO = "/media/sit.webp";
+const IMG_ME = "/media/lift.webp";
 const IMG_RELIABLE = "/media/still-08.webp";
-const IMG_CTA = "/media/wall.jpg";
+const IMG_CTA = "/media/wall.webp";
 
 /* ------------------------------------------------------------------ */
 /* Roll Hover helper                                                  */
@@ -359,7 +359,7 @@ function About() {
     };
 
     gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
 
     // 2. Wrap all animations in gsap.context()
     const ctx = gsap.context(() => {
@@ -398,11 +398,11 @@ function About() {
         // On load: smooth scale & fade reveal for the sitting cutout anchored at palm contact line
         gsap.fromTo(
           heroImgRef.current,
-          { opacity: 0, scale: 0.94, transformOrigin: "center 67.5%" },
+          { opacity: 0, scale: 1.5, transformOrigin: "80% 68.5%" },
           {
             opacity: 1,
             scale: 1,
-            transformOrigin: "center 67.5%",
+            transformOrigin: "80% 68.5%",
             duration: 1.2,
             ease: "power3.out",
           }
@@ -655,7 +655,7 @@ function About() {
   }, []);
 
   return (
-    <main ref={pageContainerRef} className="bg-paper text-primary">
+    <main ref={pageContainerRef} className="bg-paper text-primary overflow-x-clip">
       {/* ═══════════════════════════════════════════════════════════════
           SECTION 1 — THE engineer. + sun.jpg
           ═══════════════════════════════════════════════════════════════ */}
@@ -686,7 +686,7 @@ function About() {
               ref={heroImgRef}
               src={IMG_HERO}
               alt="Atharv Pathak sitting on the line"
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[31.5%] h-[540px] sm:h-[640px] md:h-[760px] lg:h-[880px] xl:h-[960px] w-auto max-w-none object-contain pointer-events-none select-none z-30 sit-shadow will-change-transform"
+              className="absolute bottom-0 right-[-8px] sm:right-[-12px] md:right-[-18px] lg:right-[-24px] xl:right-[-32px] translate-y-[31.5%] h-[520px] sm:h-[600px] md:h-[730px] lg:h-[840px] xl:h-[920px] w-auto max-w-none object-contain pointer-events-none select-none z-30 sit-shadow will-change-transform"
             />
           </div>
         </div>

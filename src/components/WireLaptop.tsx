@@ -200,10 +200,6 @@ function Scene({ state, cover, isDark }: SceneProps) {
   );
 }
 
-// Preload models for immediate display
-useGLTF.preload("/model/laptop_lines_143642.glb");
-useGLTF.preload("/model/laptop_lines_dad2d8.glb");
-
 type Props = {
   state: MutableRefObject<LaptopState>;
   /** project cover shown on the laptop screen (falls back to a flat panel if it fails to load) */

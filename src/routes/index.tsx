@@ -22,11 +22,11 @@ function RollLink({ children }: { children: string }) {
 }
 
 const quoteImages = [
-  "quote1.png",
-  "quote2.png",
-  "quote3.png",
-  "quote4.png",
-  "quote5.png"
+  "quote1.webp",
+  "quote2.webp",
+  "quote3.webp",
+  "quote4.webp",
+  "quote5.webp"
 ];
 
 function QuoteSlideshow({
@@ -123,6 +123,13 @@ function Home() {
       const r = el.getBoundingClientRect();
       return { x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height };
     }
+    let cachedA = rel(slot!);
+    let cachedB = rel(box!);
+    function measure() {
+      if (!slot || !box || !stage) return;
+      cachedA = rel(slot);
+      cachedB = rel(box);
+    }
     function targetVal() {
       if (reduce) return 1;
       const top = box!.getBoundingClientRect().top;
@@ -130,12 +137,10 @@ function Home() {
       return clamp((vh * 0.9 - top) / (vh * 0.7));
     }
     function paint(p: number) {
-      const A = rel(slot!);
-      const B = rel(box!);
-      frame!.style.left = lerp(A.x, B.x, p) + 'px';
-      frame!.style.top = lerp(A.y, B.y, p) + 'px';
-      frame!.style.width = lerp(A.w, B.w, p) + 'px';
-      frame!.style.height = lerp(A.h, B.h, p) + 'px';
+      frame!.style.left = lerp(cachedA.x, cachedB.x, p) + 'px';
+      frame!.style.top = lerp(cachedA.y, cachedB.y, p) + 'px';
+      frame!.style.width = lerp(cachedA.w, cachedB.w, p) + 'px';
+      frame!.style.height = lerp(cachedA.h, cachedB.h, p) + 'px';
       img!.style.transform = 'scale(' + lerp(1.3, 1, p) + ')';
     }
     function tick() {
@@ -146,16 +151,18 @@ function Home() {
       raf = cur === t ? 0 : requestAnimationFrame(tick);
     }
     function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+    function onResize() { measure(); kick(); }
 
     window.addEventListener('scroll', kick, { passive: true });
-    window.addEventListener('resize', kick);
-    window.addEventListener('load', kick);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('load', onResize);
+    measure();
     kick();
 
     return () => {
       window.removeEventListener('scroll', kick);
-      window.removeEventListener('resize', kick);
-      window.removeEventListener('load', kick);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('load', onResize);
       cancelAnimationFrame(raf);
     };
   }, []);
@@ -405,8 +412,10 @@ function Home() {
           {/* Right Column (Portrait) */}
           <div className="w-full lg:w-[641px] relative h-[400px] lg:h-auto bg-paper">
             <motion.img
-              src="/media/Transparent_-Portrait.png"
+              src="/media/Transparent_-Portrait.webp"
               alt="Atharv Pathak"
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 h-full w-full object-contain object-bottom scale-[1.1] origin-bottom z-20 grayscale contrast-125 cursor-pointer"
               animate={{ x: [0, 0, 2, 2, 0] }}
               transition={{ duration: 4.4, ease: "linear", times: [0, 0.4545, 0.5, 0.9545, 1], repeat: Infinity }}
@@ -468,13 +477,13 @@ function Home() {
                 <div className="lg:col-span-4 relative h-48 lg:h-auto border-t lg:border-t-0 border-primary/50 overflow-hidden bg-primary/10">
                   <div className="absolute inset-0 transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 origin-center">
                     {service.n === "01" && (
-                      <img src="/media/Full-Stack.png" alt="Full-Stack Development" className="absolute inset-0 h-full w-full object-cover object-left-top" />
+                      <img src="/media/Full-Stack.webp" alt="Full-Stack Development" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover object-left-top" />
                     )}
                     {service.n === "02" && (
-                      <img src="/media/AutomationAndData.png" alt="Automation & Data" className="absolute inset-0 h-full w-full object-cover object-left-top" />
+                      <img src="/media/AutomationAndData.webp" alt="Automation & Data" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover object-left-top" />
                     )}
                     {service.n === "03" && (
-                      <img src="/media/AIML.png" alt="AI & Machine Learning" className="absolute inset-0 h-full w-full object-cover object-left-top" />
+                      <img src="/media/AIML.webp" alt="AI & Machine Learning" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover object-left-top" />
                     )}
                   </div>
                 </div>

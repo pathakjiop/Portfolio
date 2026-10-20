@@ -8,16 +8,13 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const [introReady, setIntroReady] = useState(() => hasIntroPlayed());
 
-  // Poll for intro completion (hasIntroPlayed flips to true when the loader finishes)
+  // Intro completion listener
   useEffect(() => {
     if (introReady) return;
-    const id = window.setInterval(() => {
-      if (hasIntroPlayed()) {
-        setIntroReady(true);
-        window.clearInterval(id);
-      }
-    }, 100);
-    return () => window.clearInterval(id);
+    const onIntroDone = () => setIntroReady(true);
+    window.addEventListener("introDone", onIntroDone, { once: true });
+    if (hasIntroPlayed()) setIntroReady(true);
+    return () => window.removeEventListener("introDone", onIntroDone);
   }, [introReady]);
 
   useEffect(() => {

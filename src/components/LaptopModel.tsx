@@ -125,6 +125,3 @@ export function LaptopModel({
     </div>
   );
 }
-
-useGLTF.preload("/model/laptop_lines_143642.glb");
-useGLTF.preload("/model/laptop_lines_dad2d8.glb");
