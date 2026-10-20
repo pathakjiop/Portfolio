@@ -47,8 +47,12 @@ html.dark .sit-shadow {
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
-  html {
+  html,
+  body {
     scroll-behavior: auto;
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
+    background-color: var(--color-paper);
   }
 
   html.lenis,

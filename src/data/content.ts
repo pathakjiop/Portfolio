@@ -159,6 +159,48 @@ export const filters = [
 
 export const works: Work[] = [
   {
+    slug: "mednoteclassifier",
+    title: "MedNoteClassifier — Clinical Feature Span Extraction",
+    shortTitle: "MedNote",
+    subtitle: "Clinical NLP Suite & Interactive Web Application",
+    kind: "CLINICAL NLP / FULL-STACK AI",
+    statusBadge: "ACTIVE BUILD",
+    status: "Clinical NLP Suite & Benchmark Platform",
+    year: "2026",
+    tags: ["NLP", "PYTORCH", "REACT 19", "FASTAPI", "TRANSFORMERS"],
+    filterCategories: ["AI & ML", "Full-Stack", "Backend & APIs"],
+    excerpt: "A full-stack clinical NLP solution for automated span extraction on the NBME® Clinical Patient Notes dataset, pairing PyTorch sequence tagging with a React 19 interactive annotation dashboard.",
+    body: [
+      "MedNoteClassifier is a clinical NLP solution designed for automated span extraction on the NBME® — Score Clinical Patient Notes dataset (USMLE® Step 2 Clinical Skills). The system identifies exact character offsets [start, end] in unstructured patient notes corresponding to standardized rubric concepts (e.g., 'heart pounding', 'family history of MI').",
+      "The workspace bundles a high-performance Python machine learning engine with a modern React 19 & Vite web application. The ML pipeline ensembles an Exact Lexicon Matcher with strict word-boundary enforcement, a Hybrid Character N-Gram Logistic Regression model, a PyTorch BIO sequence Transformer, and hooks for fine-tuned PubMedBERT models.",
+      "The interactive web dashboard provides clinicians and researchers with real-time text tokenization, span visual highlighting, and comparative micro-F1 benchmark evaluation across candidate model checkpoints."
+    ],
+    problem: "Unstructured clinical patient notes contain vital diagnostic criteria buried in free-text prose, making manual grading, rubric alignment, and standardized extraction tedious and prone to inter-annotator variance.",
+    solution: "An end-to-end clinical NLP span extraction pipeline combining lexicon matching, hybrid n-gram classification, and deep transformer sequence tagging, served through a real-time annotation and benchmarking web interface.",
+    architecture: {
+      frontend: "React 19, Vite, TanStack Router, and Tailwind CSS v4",
+      backend: "Node.js & Express API bridge with Python 3.10+ subprocess execution",
+      database: "NBME patient notes corpus, Kaggle evaluation rubrics, and serialized PyTorch checkpoints",
+      services: "PyTorch BIO Transformer, DistilBERT / PubMedBERT fine-tuning, Character-level Micro-F1 evaluation engine",
+    },
+    keyFeatures: [
+      "Exact character-level offset decoder ([start, end]) for unstructured clinical patient notes",
+      "Multi-model inference ensemble: Exact Lexicon Matcher, Hybrid Char N-Gram LogReg, and PyTorch BIO Transformer",
+      "Interactive clinical span annotator with real-time text highlighting and prediction visualizer",
+      "Character-level Micro-F1 evaluation engine and automated model comparison benchmarking suite",
+      "Extensible training harness for fine-tuning PubMedBERT and DistilBERT on specialized clinical ontologies",
+      "Streamlit standalone interactive demo app alongside modern React 19 web dashboard",
+    ],
+    challenges: "Clinical patient notes feature complex medical abbreviations, misspellings, and discontinuous symptom mentions. Mapping exact character offsets from subword transformer tokens back to raw character slices required a custom offset indexer to prevent prediction drift.",
+    cover: "/media/mednote-cover.jpg",
+    gallery: ["/media/mednote-cover.jpg"],
+    links: [
+      { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/MedNoteClassifier" },
+      { label: "KAGGLE DATASET", meta: "NBME Score Clinical", href: "https://www.kaggle.com/c/nbme-score-clinical-patient-notes" },
+    ],
+    featured: true,
+  },
+  {
     slug: "medishot",
     title: "MediShot — Medicine Vision & Understanding",
     shortTitle: "MediShot",
@@ -556,6 +598,7 @@ export const utilityProjects: UtilityProject[] = [
 ];
 
 export const selectedSlugs = [
+  "mednoteclassifier",
   "medishot",
   "argus",
   "minecraft-office",

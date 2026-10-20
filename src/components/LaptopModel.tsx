@@ -4,7 +4,41 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 const SCREEN_W = 1.77;
-const SCREEN_H = 1.238;
+const SCREEN_H = 1.262;
+const SCREEN_RADIUS = 0.042;
+
+function createRoundedRectGeometry(width: number, height: number, radius: number, segments = 12) {
+  const shape = new THREE.Shape();
+  const x = -width / 2;
+  const y = -height / 2;
+  const w = width;
+  const h = height;
+  const r = Math.min(radius, w / 2, h / 2);
+
+  shape.moveTo(x + r, y);
+  shape.lineTo(x + w - r, y);
+  shape.absarc(x + w - r, y + r, r, -Math.PI / 2, 0, false);
+  shape.lineTo(x + w, y + h - r);
+  shape.absarc(x + w - r, y + h - r, r, 0, Math.PI / 2, false);
+  shape.lineTo(x + r, y + h);
+  shape.absarc(x + r, y + h - r, r, Math.PI / 2, Math.PI, false);
+  shape.lineTo(x, y + r);
+  shape.absarc(x + r, y + r, r, Math.PI, (3 * Math.PI) / 2, false);
+
+  const geom = new THREE.ShapeGeometry(shape, segments);
+
+  const pos = geom.attributes.position;
+  const uvs = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i++) {
+    const px = pos.getX(i);
+    const py = pos.getY(i);
+    uvs[i * 2] = (px - x) / w;
+    uvs[i * 2 + 1] = (py - y) / h;
+  }
+  geom.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+
+  return geom;
+}
 
 function ModelContent({ cover, isDark }: { cover?: string; isDark: boolean }) {
   const modelUrl = isDark ? "/model/laptop_lines_dad2d8.glb" : "/model/laptop_lines_143642.glb";
@@ -40,11 +74,13 @@ function ModelContent({ cover, isDark }: { cover?: string; isDark: boolean }) {
     groupRef.current.position.y = -0.15 + Math.sin(t * 1.2) * 0.04;
   });
 
+  const screenGeom = useMemo(() => createRoundedRectGeometry(SCREEN_W, SCREEN_H, SCREEN_RADIUS), []);
+
   return (
     <group ref={groupRef} scale={1.5}>
       <primitive object={cloned} />
-      <mesh position={[-0.015, 0.026, -0.803]} rotation={[-0.2577, 0, 0]} renderOrder={-1}>
-        <planeGeometry args={[SCREEN_W, SCREEN_H]} />
+      {/* Front screen with curved corners precisely matching the laptop lid display curvature */}
+      <mesh position={[-0.015, 0.026, -0.803]} rotation={[-0.2577, 0, 0]} renderOrder={-1} geometry={screenGeom}>
         <meshBasicMaterial
           key={tex?.uuid ?? "no-tex"}
           map={tex ?? undefined}
