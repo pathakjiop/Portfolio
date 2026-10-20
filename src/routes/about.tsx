@@ -41,7 +41,7 @@ export const Route = createFileRoute("/about")({
 /* ------------------------------------------------------------------ */
 /* ASSET PATHS                                                        */
 /* ------------------------------------------------------------------ */
-const IMG_HERO = "/media/sit.webp";
+const IMG_HERO = "/media/sit.png";
 const IMG_ME = "/media/lift.webp";
 const IMG_RELIABLE = "/media/still-08.webp";
 const IMG_CTA = "/media/wall.webp";
