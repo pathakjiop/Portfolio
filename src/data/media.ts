@@ -42,7 +42,7 @@ export const media = {
   ctaWorks: "/media/project_cover.jpg",
 
   // Contact
-  contactWall: "/media/wall.jpg",
+  contactWall: "/media/wall.webp",
 
   // Work Covers
   coverJapan: "/media/korea_still.jpg",

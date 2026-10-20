@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { WireLaptop, type LaptopState } from "@/components/WireLaptop";
 import { HERO_POSE, poseAt } from "@/lib/laptop-wire";
+import { resetScroll } from "@/lib/scroll";
 import {
   ArrowLeft,
   ArrowRight,
@@ -119,7 +120,7 @@ function WorkView({ work }: { work: Work }) {
 
     // hero state, applied before the first paint
     introDone.current = false;
-    window.scrollTo(0, 0);
+    resetScroll();
     html.dataset.intro = "on"; // parks the site header above the viewport
     Object.assign(s, { draw: 0, screen: 1, ...HERO_POSE, y: 1.2, scale: HERO_SCALE });
 

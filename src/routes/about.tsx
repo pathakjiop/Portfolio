@@ -1,9 +1,10 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useLayoutEffect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import toast from "react-hot-toast";
+import { registerLenis, resetScroll } from "@/lib/scroll";
 import {
   Code2,
   Terminal,
@@ -335,6 +336,10 @@ function About() {
   const ctaHeadingRef = useRef<HTMLHeadingElement>(null);
   const ctaImgRef = useRef<HTMLImageElement>(null);
 
+  useLayoutEffect(() => {
+    resetScroll();
+  }, []);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -351,6 +356,9 @@ function About() {
       gestureOrientation: "vertical",
       smoothWheel: true,
     });
+
+    registerLenis(lenis);
+    resetScroll();
 
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -651,6 +659,7 @@ function About() {
       ctx.revert();
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
+      registerLenis(null);
     };
   }, []);
 

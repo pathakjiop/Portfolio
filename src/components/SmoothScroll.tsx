@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
-import { useLocation } from "@tanstack/react-router";
+import { useLocation, useLayoutEffect } from "@tanstack/react-router";
 import { hasIntroPlayed } from "@/components/intro/IntroLoader";
+import { registerLenis, resetScroll } from "@/lib/scroll";
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -23,6 +24,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
 
     // When on /about, the About page manages its own Lenis instance wired to GSAP ticker per spec
     if (location.pathname === "/about") {
+      registerLenis(null);
       return;
     }
 
@@ -35,6 +37,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     });
     
     lenisRef.current = lenis;
+    registerLenis(lenis);
 
     let rafId: number;
 
@@ -49,15 +52,12 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       cancelAnimationFrame(rafId);
       lenis.destroy();
       lenisRef.current = null;
+      registerLenis(null);
     };
   }, [location.pathname, introReady]);
 
-  useEffect(() => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true });
-    } else {
-      window.scrollTo(0, 0);
-    }
+  useLayoutEffect(() => {
+    resetScroll();
   }, [location.pathname]);
 
   return <>{children}</>;

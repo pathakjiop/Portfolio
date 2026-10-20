@@ -274,7 +274,7 @@ function Contact() {
           <div className="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-primary/40 relative min-h-[320px] sm:min-h-[400px] md:min-h-[460px] lg:min-h-full overflow-hidden bg-primary/5">
             <img
               ref={heroImgRef}
-              src={media.contactWall || "/media/wall.jpg"}
+              src={media.contactWall || "/media/wall.webp"}
               alt="Atharv Pathak street mural wall"
               className="h-full w-full object-cover object-center filter contrast-[1.02] transition-transform duration-700 ease-out hover:scale-105"
             />

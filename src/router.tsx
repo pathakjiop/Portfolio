@@ -1,5 +1,6 @@
 import { createRouter, Link } from "@tanstack/react-router";
 import { AppErrorComponent } from "@/lib/error-component";
+import { resetScroll } from "@/lib/scroll";
 import { routeTree } from "./routeTree.gen";
 
 function NotFound() {
@@ -13,9 +14,17 @@ function NotFound() {
 }
 
 export function getRouter() {
-  return createRouter({ 
+  const router = createRouter({ 
     routeTree, 
     defaultErrorComponent: AppErrorComponent,
     defaultNotFoundComponent: NotFound
   });
+
+  router.subscribe("onBeforeLoad", (event) => {
+    if (event.fromLocation && event.toLocation && event.fromLocation.pathname !== event.toLocation.pathname) {
+      resetScroll();
+    }
+  });
+
+  return router;
 }

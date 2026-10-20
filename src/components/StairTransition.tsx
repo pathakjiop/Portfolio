@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "@tanstack/react-router";
 import gsap from "gsap";
+import { resetScroll } from "@/lib/scroll";
 
 /**
  * Page transition (rebuilt from a frame study of the reference recording):
@@ -61,11 +62,14 @@ export function StairTransition() {
             done = true;
             unsubscribe();
             window.clearTimeout(fallback);
+            // reset scroll position while still completely covered
+            resetScroll(true);
             // let the new route paint under the cover before it fades
             requestAnimationFrame(() => requestAnimationFrame(finish));
           };
           const unsubscribe = router.subscribe("onResolved", reveal);
           const fallback = window.setTimeout(reveal, ROUTE_TIMEOUT_MS);
+          resetScroll(true);
           router.history.push(href);
         },
       });

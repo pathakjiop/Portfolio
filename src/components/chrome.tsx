@@ -1,7 +1,8 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useLayoutEffect } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cities, socials } from "@/data/content";
 import { media } from "@/data/media";
+import { resetScroll } from "@/lib/scroll";
 
 type Theme = "light" | "dark";
 
@@ -134,9 +135,9 @@ export function SiteFrame({ children }: { children: ReactNode }) {
   const [menu, setMenu] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setMenu(false);
-    window.scrollTo(0, 0);
+    resetScroll();
   }, [pathname]);
 
   useEffect(() => {
