@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, type FormEvent } from "react";
 import { email, socials } from "@/data/content";
 import toast from "react-hot-toast";
 import gsap from "gsap";
+import emailjs from "@emailjs/browser";
 import {
   Mail,
   Check,
@@ -155,9 +156,14 @@ function Contact() {
   const [verified, setVerified] = useState(true);
   const [copied, setCopied] = useState(false);
 
+  const formRef = useRef<HTMLFormElement>(null);
   const containerRef = useRef<HTMLElement>(null);
   const heroHeadingRef = useRef<HTMLHeadingElement>(null);
   const heroImgRef = useRef<HTMLImageElement>(null);
+
+  const emailJsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || "";
+  const emailJsTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "";
+  const emailJsPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "";
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -193,21 +199,7 @@ function Contact() {
     }
   };
 
-  function getMailData() {
-    const subject = `Portfolio Inquiry from ${fields.name.trim()}`;
-    const body = `Hi Atharv,
-
-${fields.message.trim()}
-
-----------------------------------------
-Sender Details:
-Name: ${fields.name.trim()}
-Email: ${fields.email.trim()}${fields.phone.trim() ? `\nPhone: ${fields.phone.trim()}` : ""}
-Sent via portfolio contact form`;
-    return { subject, body };
-  }
-
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
 
     if (!fields.name.trim() || !fields.email.trim() || !fields.message.trim()) {
@@ -229,24 +221,58 @@ Sent via portfolio contact form`;
     }
 
     if (fields.honeypot) {
+      // Discard bot submissions silently
       setSent(true);
+      return;
+    }
+
+    if (!formRef.current) return;
+
+    if (!emailJsServiceId || !emailJsTemplateId || !emailJsPublicKey) {
+      const missingVars = [
+        !emailJsServiceId && "VITE_EMAILJS_SERVICE_ID",
+        !emailJsTemplateId && "VITE_EMAILJS_TEMPLATE_ID",
+        !emailJsPublicKey && "VITE_EMAILJS_PUBLIC_KEY",
+      ]
+        .filter(Boolean)
+        .join(", ");
+      const msg = `EmailJS keys missing in .env (${missingVars}). Please add them to your .env file.`;
+      setError(msg);
+      toast.error(msg, { duration: 6000 });
       return;
     }
 
     setError("");
     setSubmitting(true);
 
-    const { subject, body } = getMailData();
-    const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    try {
+      await emailjs.sendForm(
+        emailJsServiceId,
+        emailJsTemplateId,
+        formRef.current,
+        {
+          publicKey: emailJsPublicKey,
+        }
+      );
 
-    // Trigger default email app
-    window.location.href = mailtoUrl;
-
-    setTimeout(() => {
       setSubmitting(false);
       setSent(true);
-      toast.success("Email client opened! You can also use Gmail below.", { icon: "✉️", duration: 4000 });
-    }, 300);
+      setFields(empty);
+      toast.success("Message sent successfully! Thank you for reaching out.", {
+        icon: "✨",
+        duration: 5000,
+      });
+    } catch (err: unknown) {
+      setSubmitting(false);
+      console.error("EmailJS submission error:", err);
+      const errorObj = err as { text?: string; message?: string };
+      const errorMessage =
+        errorObj?.text ||
+        errorObj?.message ||
+        "Failed to send email. Please check your EmailJS settings or try again.";
+      setError(errorMessage);
+      toast.error(errorMessage, { duration: 6000 });
+    }
   }
 
   return (
@@ -348,61 +374,50 @@ Sent via portfolio contact form`;
           <div className="lg:col-span-6 flex flex-col justify-between">
             {sent ? (
               <div className="p-8 sm:p-12 md:p-16 flex flex-col justify-center min-h-[450px]">
-                <p className="kicker text-primary/80 font-bold tracking-[0.2em]">MESSAGE PREPARED</p>
+                <p className="kicker text-emerald-600 dark:text-emerald-400 font-bold tracking-[0.2em] inline-flex items-center gap-2">
+                  <Check className="w-4 h-4 stroke-[3]" /> MESSAGE SENT
+                </p>
                 <h3 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-                  Ready to send!
+                  Message delivered!
                 </h3>
                 <p className="mt-4 text-base sm:text-lg opacity-85 max-w-lg leading-relaxed">
-                  Your message has been formatted and addressed to{" "}
-                  <strong className="text-primary font-semibold underline underline-offset-2">{email}</strong>.
-                  Choose your preferred way to send below:
+                  Thank you for reaching out. Your message has been sent directly to Atharv's inbox via EmailJS. I'll get back to you as soon as possible.
                 </p>
 
                 <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <a
-                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(getMailData().subject)}&body=${encodeURIComponent(getMailData().body)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="border border-primary bg-primary text-paper px-6 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:opacity-90 inline-flex items-center gap-2"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>Open in Gmail (Web)</span>
-                  </a>
-
-                  <a
-                    href={`mailto:${email}?subject=${encodeURIComponent(getMailData().subject)}&body=${encodeURIComponent(getMailData().body)}`}
-                    className="border border-primary/70 hover:border-primary px-6 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:bg-primary hover:text-paper inline-flex items-center gap-2"
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    <span>Default Mail App</span>
-                  </a>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(getMailData().body);
-                      toast.success("Message copied to clipboard!", { icon: "📋" });
-                    }}
-                    className="border border-primary/40 hover:border-primary px-5 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:bg-primary/10 inline-flex items-center gap-2 cursor-pointer"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Text</span>
-                  </button>
-
                   <button
                     type="button"
                     onClick={() => {
                       setSent(false);
                       setFields(empty);
+                      setError("");
                     }}
-                    className="border border-transparent hover:border-primary/40 px-5 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all cursor-pointer opacity-70 hover:opacity-100"
+                    className="border border-primary bg-primary text-paper px-6 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:opacity-90 inline-flex items-center gap-2 cursor-pointer"
                   >
-                    <span>Write another</span>
+                    <span>Write another message</span>
                   </button>
+
+                  <a
+                    href={`mailto:${email}`}
+                    className="border border-primary/40 hover:border-primary px-5 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:bg-primary/10 inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Direct Email ({email})</span>
+                  </a>
                 </div>
               </div>
             ) : (
-              <form onSubmit={submit} noValidate className="flex flex-col h-full">
+              <form ref={formRef} onSubmit={submit} noValidate className="flex flex-col h-full">
+                {/* EmailJS alias hidden fields for maximum template compatibility */}
+                <input type="hidden" name="name" value={fields.name} />
+                <input type="hidden" name="from_name" value={fields.name} />
+                <input type="hidden" name="email" value={fields.email} />
+                <input type="hidden" name="from_email" value={fields.email} />
+                <input type="hidden" name="reply_to" value={fields.email} />
+                <input type="hidden" name="title" value={`Portfolio Inquiry from ${fields.name.trim() || "Visitor"}`} />
+                <input type="hidden" name="subject" value={`Portfolio Inquiry from ${fields.name.trim() || "Visitor"}`} />
+                <input type="hidden" name="time" value={new Date().toLocaleString()} />
+
                 {/* Row 1: NAME * | EMAIL * (2 equal columns) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 border-b border-primary/40">
                   {/* NAME Cell */}
@@ -415,7 +430,7 @@ Sent via portfolio contact form`;
                     </label>
                     <input
                       id="name"
-                      name="name"
+                      name="user_name"
                       type="text"
                       required
                       value={fields.name}
@@ -435,7 +450,7 @@ Sent via portfolio contact form`;
                     </label>
                     <input
                       id="email"
-                      name="email"
+                      name="user_email"
                       type="email"
                       required
                       value={fields.email}
@@ -501,8 +516,18 @@ Sent via portfolio contact form`;
 
                 {/* Error Banner */}
                 {error && (
-                  <div className="px-5 sm:px-6 md:px-7 pt-4 text-xs font-mono text-red-600 dark:text-red-400">
-                    ⚠ {error}
+                  <div className="px-5 sm:px-6 md:px-7 pt-4 text-xs font-mono text-red-600 dark:text-red-400 space-y-2">
+                    <div>⚠ {error}</div>
+                    {(!emailJsServiceId || !emailJsTemplateId || !emailJsPublicKey) && (
+                      <div className="pt-1">
+                        <a
+                          href={`mailto:${email}?subject=${encodeURIComponent(`Portfolio Inquiry from ${fields.name.trim() || "Visitor"}`)}&body=${encodeURIComponent(fields.message.trim())}`}
+                          className="underline hover:text-red-700 dark:hover:text-red-300 inline-flex items-center gap-1.5 text-[0.72rem]"
+                        >
+                          <Mail className="w-3.5 h-3.5" /> Or send directly via mail client instead
+                        </a>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -519,7 +544,7 @@ Sent via portfolio contact form`;
                       disabled={submitting}
                       className="border border-primary/70 hover:border-primary px-8 py-3 text-[0.68rem] font-mono uppercase tracking-[0.24em] font-semibold transition-all hover:bg-primary hover:text-paper cursor-pointer disabled:opacity-50"
                     >
-                      <Roll>{submitting ? "Submitting..." : "Submit"}</Roll>
+                      <Roll>{submitting ? "Sending..." : "Submit"}</Roll>
                     </button>
                   </div>
                 </div>
