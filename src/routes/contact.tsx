@@ -91,11 +91,10 @@ function TurnstileBadge({
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") handleClick();
       }}
-      className={`group inline-flex items-center justify-between gap-5 sm:gap-7 rounded-sm border shadow-[0_1px_3px_rgba(0,0,0,0.08)] py-2.5 px-3.5 select-none transition-all cursor-pointer ${
-        hasError && !verified
+      className={`group inline-flex items-center justify-between gap-5 sm:gap-7 rounded-sm border shadow-[0_1px_3px_rgba(0,0,0,0.08)] py-2.5 px-3.5 select-none transition-all cursor-pointer ${hasError && !verified
           ? "border-red-500 bg-red-500/10 ring-1 ring-red-500"
           : "bg-white text-neutral-800 border-neutral-300 hover:border-neutral-400"
-      }`}
+        }`}
       aria-label="Cloudflare Turnstile Verification"
     >
       <div className="flex items-center gap-2.5">
@@ -107,17 +106,15 @@ function TurnstileBadge({
           <div className="w-5 h-5 rounded-full border-2 border-neutral-300 border-t-[#f38020] animate-spin" />
         ) : (
           <div
-            className={`w-5 h-5 rounded-sm border-2 transition-colors ${
-              hasError && !verified
+            className={`w-5 h-5 rounded-sm border-2 transition-colors ${hasError && !verified
                 ? "border-red-500 bg-red-50"
                 : "border-neutral-400 group-hover:border-neutral-600 bg-white"
-            }`}
+              }`}
           />
         )}
         <span
-          className={`text-[13px] font-medium tracking-tight ${
-            hasError && !verified ? "text-red-600 font-semibold" : "text-neutral-800"
-          }`}
+          className={`text-[13px] font-medium tracking-tight ${hasError && !verified ? "text-red-600 font-semibold" : "text-neutral-800"
+            }`}
         >
           {verified ? "Success!" : checking ? "Verifying..." : "Verify you are human"}
         </span>
@@ -444,15 +441,13 @@ function Contact() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 border-b border-primary/40">
                   {/* NAME Cell */}
                   <div
-                    className={`border-b sm:border-b-0 sm:border-r border-primary/40 p-5 sm:p-6 md:p-7 transition-colors ${
-                      fieldErrors.name ? "bg-red-500/10" : ""
-                    }`}
+                    className={`border-b sm:border-b-0 sm:border-r border-primary/40 p-5 sm:p-6 md:p-7 transition-colors ${fieldErrors.name ? "bg-red-500/10" : ""
+                      }`}
                   >
                     <label
                       htmlFor="name"
-                      className={`block text-[0.62rem] font-mono tracking-[0.24em] uppercase font-semibold transition-colors ${
-                        fieldErrors.name ? "text-red-500" : "opacity-75"
-                      }`}
+                      className={`block text-[0.62rem] font-mono tracking-[0.24em] uppercase font-semibold transition-colors ${fieldErrors.name ? "text-red-500" : "opacity-75"
+                        }`}
                     >
                       NAME *
                     </label>
@@ -465,25 +460,22 @@ function Contact() {
                       onChange={(e) => update("name", e.target.value)}
                       autoComplete="name"
                       placeholder={fieldErrors.name ? "Please enter your name" : ""}
-                      className={`mt-3 w-full bg-transparent text-lg md:text-xl font-normal outline-none focus:outline-none ${
-                        fieldErrors.name
+                      className={`mt-3 w-full bg-transparent text-lg md:text-xl font-normal outline-none focus:outline-none ${fieldErrors.name
                           ? "placeholder:text-red-400 placeholder:opacity-70 text-red-600 dark:text-red-400"
                           : "placeholder:opacity-30"
-                      }`}
+                        }`}
                     />
                   </div>
 
                   {/* EMAIL Cell */}
                   <div
-                    className={`p-5 sm:p-6 md:p-7 transition-colors ${
-                      fieldErrors.email ? "bg-red-500/10" : ""
-                    }`}
+                    className={`p-5 sm:p-6 md:p-7 transition-colors ${fieldErrors.email ? "bg-red-500/10" : ""
+                      }`}
                   >
                     <label
                       htmlFor="email"
-                      className={`block text-[0.62rem] font-mono tracking-[0.24em] uppercase font-semibold transition-colors ${
-                        fieldErrors.email ? "text-red-500" : "opacity-75"
-                      }`}
+                      className={`block text-[0.62rem] font-mono tracking-[0.24em] uppercase font-semibold transition-colors ${fieldErrors.email ? "text-red-500" : "opacity-75"
+                        }`}
                     >
                       EMAIL *
                     </label>
@@ -496,11 +488,10 @@ function Contact() {
                       onChange={(e) => update("email", e.target.value)}
                       autoComplete="email"
                       placeholder={fieldErrors.email ? "Please enter a valid email" : ""}
-                      className={`mt-3 w-full bg-transparent text-lg md:text-xl font-normal outline-none focus:outline-none ${
-                        fieldErrors.email
+                      className={`mt-3 w-full bg-transparent text-lg md:text-xl font-normal outline-none focus:outline-none ${fieldErrors.email
                           ? "placeholder:text-red-400 placeholder:opacity-70 text-red-600 dark:text-red-400"
                           : "placeholder:opacity-30"
-                      }`}
+                        }`}
                     />
                   </div>
                 </div>
@@ -530,15 +521,13 @@ function Contact() {
 
                 {/* Row 3: MESSAGE * (Full width) */}
                 <div
-                  className={`border-b border-primary/40 p-5 sm:p-6 md:p-7 flex-1 transition-colors ${
-                    fieldErrors.message ? "bg-red-500/10" : ""
-                  }`}
+                  className={`border-b border-primary/40 p-5 sm:p-6 md:p-7 flex-1 transition-colors ${fieldErrors.message ? "bg-red-500/10" : ""
+                    }`}
                 >
                   <label
                     htmlFor="message"
-                    className={`block text-[0.62rem] font-mono tracking-[0.24em] uppercase font-semibold transition-colors ${
-                      fieldErrors.message ? "text-red-500" : "opacity-75"
-                    }`}
+                    className={`block text-[0.62rem] font-mono tracking-[0.24em] uppercase font-semibold transition-colors ${fieldErrors.message ? "text-red-500" : "opacity-75"
+                      }`}
                   >
                     MESSAGE *
                   </label>
@@ -550,11 +539,10 @@ function Contact() {
                     value={fields.message}
                     onChange={(e) => update("message", e.target.value)}
                     placeholder={fieldErrors.message ? "Please enter your message" : ""}
-                    className={`mt-3 w-full bg-transparent text-lg md:text-xl font-normal outline-none resize-none focus:outline-none ${
-                      fieldErrors.message
+                    className={`mt-3 w-full bg-transparent text-lg md:text-xl font-normal outline-none resize-none focus:outline-none ${fieldErrors.message
                         ? "placeholder:text-red-400 placeholder:opacity-70 text-red-600 dark:text-red-400"
                         : ""
-                    }`}
+                      }`}
                   />
                 </div>
 
