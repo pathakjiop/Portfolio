@@ -3,7 +3,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 import { useState, useRef, useEffect, type FormEvent } from "react";
 import { email, socials } from "@/data/content";
-import { createServerFn } from "@tanstack/react-start";
 import toast from "react-hot-toast";
 import gsap from "gsap";
 import {
@@ -42,16 +41,6 @@ const empty: Fields = {
   message: "",
   honeypot: "",
 };
-
-const sendEmail = createServerFn({ method: "POST" })
-  .validator((data: Fields) => data)
-  .handler(async ({ data }) => {
-    if (data.honeypot) {
-      return { success: true };
-    }
-    console.log("Contact form submission:", data);
-    return { success: true };
-  });
 
 function Roll({ children }: { children: string }) {
   return (
@@ -204,11 +193,25 @@ function Contact() {
     }
   };
 
-  async function submit(event: FormEvent) {
+  function getMailData() {
+    const subject = `Portfolio Inquiry from ${fields.name.trim()}`;
+    const body = `Hi Atharv,
+
+${fields.message.trim()}
+
+----------------------------------------
+Sender Details:
+Name: ${fields.name.trim()}
+Email: ${fields.email.trim()}${fields.phone.trim() ? `\nPhone: ${fields.phone.trim()}` : ""}
+Sent via portfolio contact form`;
+    return { subject, body };
+  }
+
+  function submit(event: FormEvent) {
     event.preventDefault();
 
-    if (!fields.name.trim() || !fields.email.trim() || !fields.phone.trim() || !fields.message.trim()) {
-      setError("Please fill out all required fields.");
+    if (!fields.name.trim() || !fields.email.trim() || !fields.message.trim()) {
+      setError("Please fill out your Name, Email, and Message.");
       toast.error("Please fill out all required fields.");
       return;
     }
@@ -220,30 +223,30 @@ function Contact() {
     }
 
     if (!verified) {
-      setError("Please complete the Cloudflare security verification.");
+      setError("Please complete the security verification.");
       toast.error("Security verification required.");
+      return;
+    }
+
+    if (fields.honeypot) {
+      setSent(true);
       return;
     }
 
     setError("");
     setSubmitting(true);
 
-    try {
-      const data = await sendEmail({ data: fields });
+    const { subject, body } = getMailData();
+    const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-      if (data?.success) {
-        setSent(true);
-        toast.success("Message received! I'll reply promptly.", { icon: "✨" });
-      } else {
-        setError("Unable to transmit message. Please email directly.");
-        toast.error("Transmission failed.");
-      }
-    } catch (err) {
-      setError("Failed to send message. Please contact via email.");
-      toast.error("Submission failed. Please use direct email.");
-    } finally {
+    // Trigger default email app
+    window.location.href = mailtoUrl;
+
+    setTimeout(() => {
       setSubmitting(false);
-    }
+      setSent(true);
+      toast.success("Email client opened! You can also use Gmail below.", { icon: "✉️", duration: 4000 });
+    }, 300);
   }
 
   return (
@@ -345,23 +348,56 @@ function Contact() {
           <div className="lg:col-span-6 flex flex-col justify-between">
             {sent ? (
               <div className="p-8 sm:p-12 md:p-16 flex flex-col justify-center min-h-[450px]">
-                <p className="kicker text-primary/80 font-bold">MESSAGE TRANSMITTED</p>
+                <p className="kicker text-primary/80 font-bold tracking-[0.2em]">MESSAGE PREPARED</p>
                 <h3 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-                  Thanks for reaching out!
+                  Ready to send!
                 </h3>
-                <p className="mt-4 text-base sm:text-lg opacity-80 max-w-md">
-                  Your message has been received. I’ll review your inquiry and get back to you shortly.
+                <p className="mt-4 text-base sm:text-lg opacity-85 max-w-lg leading-relaxed">
+                  Your message has been formatted and addressed to{" "}
+                  <strong className="text-primary font-semibold underline underline-offset-2">{email}</strong>.
+                  Choose your preferred way to send below:
                 </p>
-                <div className="mt-8">
+
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <a
+                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(getMailData().subject)}&body=${encodeURIComponent(getMailData().body)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="border border-primary bg-primary text-paper px-6 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:opacity-90 inline-flex items-center gap-2"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Open in Gmail (Web)</span>
+                  </a>
+
+                  <a
+                    href={`mailto:${email}?subject=${encodeURIComponent(getMailData().subject)}&body=${encodeURIComponent(getMailData().body)}`}
+                    className="border border-primary/70 hover:border-primary px-6 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:bg-primary hover:text-paper inline-flex items-center gap-2"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Default Mail App</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(getMailData().body);
+                      toast.success("Message copied to clipboard!", { icon: "📋" });
+                    }}
+                    className="border border-primary/40 hover:border-primary px-5 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:bg-primary/10 inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copy Text</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => {
                       setSent(false);
                       setFields(empty);
                     }}
-                    className="border border-primary/70 hover:border-primary px-7 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all hover:bg-primary hover:text-paper cursor-pointer"
+                    className="border border-transparent hover:border-primary/40 px-5 py-3 text-[0.68rem] font-mono uppercase tracking-[0.22em] font-semibold transition-all cursor-pointer opacity-70 hover:opacity-100"
                   >
-                    <Roll>Write another</Roll>
+                    <span>Write another</span>
                   </button>
                 </div>
               </div>
@@ -410,24 +446,24 @@ function Contact() {
                   </div>
                 </div>
 
-                {/* Row 2: PHONE * (Full width) */}
+                {/* Row 2: PHONE (OPTIONAL) (Full width) */}
                 <div className="border-b border-primary/40 p-5 sm:p-6 md:p-7">
                   <label
                     htmlFor="phone"
                     className="block text-[0.62rem] font-mono tracking-[0.24em] uppercase font-semibold opacity-75"
                   >
-                    PHONE *
+                    PHONE (OPTIONAL)
                   </label>
                   <div className="relative mt-3 flex items-center">
                     <input
                       id="phone"
                       name="phone"
                       type="tel"
-                      required
                       value={fields.phone}
                       onChange={(e) => update("phone", e.target.value)}
                       autoComplete="tel"
-                      className="w-full bg-transparent text-lg md:text-xl font-normal outline-none pr-8 focus:outline-none"
+                      placeholder="+91 98765 43210 (optional)"
+                      className="w-full bg-transparent text-lg md:text-xl font-normal outline-none pr-8 focus:outline-none placeholder:opacity-30"
                     />
                     <ChevronsUpDown className="w-4 h-4 opacity-40 absolute right-1 pointer-events-none" />
                   </div>
