@@ -381,7 +381,7 @@ function Contact() {
                   Message delivered!
                 </h3>
                 <p className="mt-4 text-base sm:text-lg opacity-85 max-w-lg leading-relaxed">
-                  Thank you for reaching out. Your message has been sent directly to Atharv's inbox via EmailJS. I'll get back to you as soon as possible.
+                  Thank you for reaching out. I'll get back to you as soon as possible.
                 </p>
 
                 <div className="mt-8 flex flex-wrap items-center gap-3">
