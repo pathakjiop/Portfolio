@@ -12,17 +12,16 @@ function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
       const stored = window.localStorage.getItem("atharv-theme");
-      if (stored === "dark" || stored === "light") return stored;
+      if (stored === "dark") return "dark";
+      if (stored === "light") return "light";
       if (document.documentElement.classList.contains("dark")) return "dark";
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
     }
     return "light";
   });
 
   useEffect(() => {
     const stored = window.localStorage.getItem("atharv-theme");
-    const isDark = stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    const active = isDark ? "dark" : "light";
+    const active: Theme = stored === "dark" ? "dark" : "light";
     setTheme(active);
     document.documentElement.classList.toggle("dark", active === "dark");
   }, []);
@@ -115,11 +114,11 @@ function ClockMarquee() {
   );
 }
 
-function Roll({ children }: { children: string }) {
+function Roll({ children, hoverText }: { children: string; hoverText?: string }) {
   return (
     <span className="roll">
       <span>{children}</span>
-      <span>{children}</span>
+      <span>{hoverText ?? children}</span>
     </span>
   );
 }
@@ -184,13 +183,26 @@ export function SiteFrame({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={toggle}
-            className="group flex flex-1 items-center justify-end gap-2.5 px-4"
+            className="group flex flex-1 items-center justify-end gap-2.5 px-4 h-full cursor-pointer select-none transition-colors"
             aria-label={theme === "light" ? "Switch to dark" : "Switch to light"}
           >
             <span className="kicker">
-              <Roll>{theme === "light" ? "Light" : "Dark"}</Roll>
+              <Roll hoverText={theme === "light" ? "DARK" : "LIGHT"}>
+                {theme === "light" ? "LIGHT" : "DARK"}
+              </Roll>
             </span>
-            <span className="block h-3 w-3 border border-current" />
+            <span
+              className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-start border border-current overflow-hidden"
+              aria-hidden="true"
+            >
+              <span
+                className={`h-full bg-current transition-all duration-300 ease-out ${
+                  theme === "light"
+                    ? "w-0 group-hover:w-full group-focus-visible:w-full"
+                    : "w-full group-hover:w-0 group-focus-visible:w-0"
+                }`}
+              />
+            </span>
           </button>
           <button
             type="button"

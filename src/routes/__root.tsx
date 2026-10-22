@@ -36,7 +36,7 @@ export const Route = createRootRoute({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{if('scrollRestoration' in history){history.scrollRestoration='manual';}var t=localStorage.getItem("atharv-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}}catch(e){}})();`,
+            __html: `(function(){try{if('scrollRestoration' in history){history.scrollRestoration='manual';}var t=localStorage.getItem("atharv-theme");if(t==="dark"){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}}catch(e){}})();`,
           }}
         />
         <HeadContent />
