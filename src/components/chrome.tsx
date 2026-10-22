@@ -269,8 +269,12 @@ export function SiteFrame({ children }: { children: ReactNode }) {
         </div>
       </div>
 
-      <div className="pt-14 md:pt-16">{children}</div>
-      <Footer />
+      <div className="flex min-h-screen flex-col justify-between">
+        <div className="flex-1 pt-14 md:pt-16 min-h-[calc(100dvh-3.5rem)] md:min-h-[calc(100dvh-4rem)]">
+          {children}
+        </div>
+        <Footer />
+      </div>
     </>
   );
 }

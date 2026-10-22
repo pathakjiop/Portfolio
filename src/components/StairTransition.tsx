@@ -65,7 +65,9 @@ export function StairTransition() {
             // reset scroll position while still completely covered
             resetScroll(true);
             // let the new route paint under the cover before it fades
-            requestAnimationFrame(() => requestAnimationFrame(finish));
+            window.setTimeout(() => {
+              requestAnimationFrame(() => requestAnimationFrame(finish));
+            }, 80);
           };
           const unsubscribe = router.subscribe("onResolved", reveal);
           const fallback = window.setTimeout(reveal, ROUTE_TIMEOUT_MS);
