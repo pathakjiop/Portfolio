@@ -27,10 +27,21 @@
  * favicon, PWA icons and title for a plain utility that keeps the og.grok.me
  * card — where no card is the expected verdict rather than a failure.
  */
-import { existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { OG_SITE_REL_PATH, readOgSite, siteHasCustomCard } from "./grok-pwa-shared.mjs";
+
+export const OG_SITE_REL_PATH = "src/lib/og/site.json";
+export function readOgSite(workspaceRoot) {
+  try {
+    return JSON.parse(readFileSync(join(workspaceRoot, OG_SITE_REL_PATH), "utf8"));
+  } catch {
+    return null;
+  }
+}
+export function siteHasCustomCard(site) {
+  return String(site?.card ?? "").toLowerCase() === "custom";
+}
 
 // Over this, link scrapers (X card previews included) time out or skip the
 // image, so the card silently fails to unfurl. The og skill's JPEG contract
@@ -38,7 +49,7 @@ import { OG_SITE_REL_PATH, readOgSite, siteHasCustomCard } from "./grok-pwa-shar
 export const MAX_CARD_BYTES = 600 * 1024;
 
 // Written by the brand task while it generates, removed when it finishes.
-export const OG_PENDING_REL_PATH = ".grok/og-pending";
+export const OG_PENDING_REL_PATH = ".portfolio/og-pending";
 // A Stop mid-generation leaves the marker behind, so the demotion expires
 // instead of hiding a missing card forever on that workspace.
 export const OG_PENDING_MAX_AGE_MS = 10 * 60 * 1000;
@@ -85,7 +96,7 @@ function brandWarningsOnDisk({
   workspaceRoot = "/workspace",
   cardRequired = false,
 }) {
-  const skillPath = join(workspaceRoot, ".grok/skills/og/SKILL.md");
+  const skillPath = join(workspaceRoot, ".portfolio/skills/og/SKILL.md");
   const sitePath = join(workspaceRoot, OG_SITE_REL_PATH);
   const site = readOgSite(workspaceRoot);
   const cardPath = [
@@ -113,7 +124,7 @@ function brandWarningsOnDisk({
     warnings.push(
       `BRAND WARNING: this looks like a game/canvas app but ${workspaceRoot}/public/og.jpg `
         + "is missing. Games and visually rich apps must ship a custom 1200x630 share card "
-        + "built from the app's own art — the default og.grok.me placeholder card is not "
+        + "built from the app's own art — the default og.portfolio.me placeholder card is not "
         + `acceptable for them. You are not done: open ${skillPath} and finish the `
         + "brand-asset pass.",
     );
@@ -122,12 +133,12 @@ function brandWarningsOnDisk({
       `BRAND WARNING: ${workspaceRoot}/public/og.jpg is missing and this pass exists to `
         + "produce it. Generate the 1200x630 card from the app's own art and hand it over "
         + `per ${skillPath}. If no image-generation tool is available in this session, `
-        + "report that instead of reporting a pass — the app keeps the og.grok.me "
+        + "report that instead of reporting a pass — the app keeps the og.portfolio.me "
         + "placeholder.",
     );
   } else {
     warnings.push(
-      "BRAND NOTE: no custom public/og.jpg — the platform will serve the og.grok.me placeholder. "
+      "BRAND NOTE: no custom public/og.jpg — the platform will serve the og.portfolio.me placeholder. "
         + "Custom cards are the default for games of every kind (DOM board/word games included), "
         + "whimsical apps, creative tools, and brand-forward pages — only plain utilities "
         + "(converters, CRUD trackers, admin dashboards) keep the placeholder. If this app "

@@ -6,9 +6,6 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
-// @ts-expect-error JS plugin alongside the TS vite config
-import { grokPwaPlugin } from "./scripts/grok-pwa-plugin.mjs";
-// @ts-expect-error JS plugin alongside the TS vite config
 import { appEnvPlugin } from "./scripts/app-env-plugin.mjs";
 import { isMigrationFile } from "./scripts/migration-plan.mjs";
 
@@ -32,7 +29,7 @@ function hasGlobbedMigrations(root: string): boolean {
  */
 function pgliteBootstrapPlugin(): Plugin {
   return {
-    name: "app-builder:pglite-bootstrap",
+    name: "portfolio:pglite-bootstrap",
     apply: "serve",
     async configureServer(server) {
       if (!hasGlobbedMigrations(server.config.root)) return;
@@ -44,7 +41,7 @@ function pgliteBootstrapPlugin(): Plugin {
           await mod.ensureDbReady();
         }
       } catch (err) {
-        console.error("[app-builder] DB bootstrap failed:", err);
+        console.error("[portfolio] DB bootstrap failed:", err);
         throw err;
       }
     },
@@ -63,7 +60,7 @@ function pgliteBootstrapPlugin(): Plugin {
  */
 function authPopupPlugin(): Plugin {
   return {
-    name: "app-builder:auth-popup",
+    name: "portfolio:auth-popup",
     apply: "serve",
     configureServer(server) {
       // Register immediately (not in a returned post-hook) so we run BEFORE
@@ -89,7 +86,7 @@ function authPopupPlugin(): Plugin {
           );
           const proto = String(
             req.headers["x-forwarded-proto"] ??
-              ((req.socket as { encrypted?: boolean } | undefined)?.encrypted ? "https" : "http"),
+            ((req.socket as { encrypted?: boolean } | undefined)?.encrypted ? "https" : "http"),
           );
           const requestHeaders = new Headers();
           for (const [key, value] of Object.entries(req.headers)) {
@@ -130,7 +127,7 @@ function authPopupPlugin(): Plugin {
           const body = Buffer.from(await response.arrayBuffer());
           res.end(body);
         } catch (err) {
-          console.error("[app-builder] /auth/popup handler failed:", err);
+          console.error("[portfolio] /auth/popup handler failed:", err);
           if (!res.headersSent) {
             res.statusCode = 500;
             res.setHeader("content-type", "text/plain; charset=utf-8");
@@ -179,20 +176,14 @@ export default defineConfig(({ command, isPreview }) => ({
     authPopupPlugin(),
     // Dev-only /__app-env, read by scripts/check-auth-invariant.mjs.
     appEnvPlugin(),
-    // PWA head + ?install=1 tutorial page; runs before Start/Nitro.
-    grokPwaPlugin(),
     tailwindcss(),
     tanstackStart(),
     ...(command === "build" || isPreview
       ? [
-          nitro({
-            preset: "vercel",
-            // Auto-registers server/middleware/* (the PWA install page +
-            // manifest + head-tag middleware). Nitro v3 defaults serverDir to
-            // false, so removing this silently unwires /?install=1 on deploys.
-            serverDir: "./server",
-          }),
-        ]
+        nitro({
+          preset: "vercel",
+        }),
+      ]
       : []),
     viteReact(),
   ],

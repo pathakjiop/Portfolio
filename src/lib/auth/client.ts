@@ -1,7 +1,7 @@
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { runPreSignInSignOut, runSignOut } from "../../../scripts/sign-out-plan.mjs";
-import { GROK_PROVIDERS } from "./providers";
+import { PORTFOLIO_PROVIDERS, GROK_PROVIDERS } from "./providers";
 
 /**
  * Better Auth client for this React SPA (browser-side).
@@ -38,20 +38,21 @@ export const authClient = createAuthClient({
 export const authEnabled = import.meta.env.VITE_AUTH_ENABLED !== "false";
 
 /** The upstream providers to render sign-in buttons for. */
-export { GROK_PROVIDERS };
+export { PORTFOLIO_PROVIDERS, GROK_PROVIDERS };
 
 // ── Live-preview bearer token ────────────────────────────────────────────────
 // The embedded preview iframe has partitioned cookies, so we keep the session's
 // bearer token in sessionStorage and attach it to every Better Auth request (and
 // to server functions, via `@/lib/auth/middleware`). Empty everywhere except the
 // preview after a popup sign-in, so the cookie path is untouched elsewhere.
-const BEARER_KEY = "grok-auth.bearer-token";
+const BEARER_KEY = "portfolio-auth.bearer-token";
+const LEGACY_BEARER_KEY = "grok-auth.bearer-token";
 
 /** The stored preview bearer token, or null. */
 export function getBearerToken(): string | null {
   if (typeof window === "undefined") return null;
   try {
-    return window.sessionStorage.getItem(BEARER_KEY);
+    return window.sessionStorage.getItem(BEARER_KEY) ?? window.sessionStorage.getItem(LEGACY_BEARER_KEY);
   } catch {
     return null;
   }
@@ -60,8 +61,12 @@ export function getBearerToken(): string | null {
 function setBearerToken(token: string | null): void {
   if (typeof window === "undefined") return;
   try {
-    if (token) window.sessionStorage.setItem(BEARER_KEY, token);
-    else window.sessionStorage.removeItem(BEARER_KEY);
+    if (token) {
+      window.sessionStorage.setItem(BEARER_KEY, token);
+    } else {
+      window.sessionStorage.removeItem(BEARER_KEY);
+      window.sessionStorage.removeItem(LEGACY_BEARER_KEY);
+    }
   } catch {
     /* storage unavailable — ignore */
   }
@@ -80,7 +85,11 @@ function inLivePreview(): boolean {
 }
 
 /** Message the popup posts back to the opener once sign-in completes. */
-type PopupMessage = { source: "grok-auth-popup"; token: string | null; error?: string };
+type PopupMessage = {
+  source: "portfolio-auth-popup" | "grok-auth-popup";
+  token: string | null;
+  error?: string;
+};
 
 /**
  * Start sign-in with one upstream provider (`providerId` from `GROK_PROVIDERS`),
@@ -165,7 +174,7 @@ function openSignInPopup(providerId: string): Window | null {
   const origin = window.location.origin;
   const url = `${origin}/auth/popup?providerId=${encodeURIComponent(providerId)}`;
   // Unique name per attempt so a prior attempt stuck on the SPA is not reused.
-  const name = `grok-signin-${Date.now()}`;
+  const name = `portfolio-signin-${Date.now()}`;
   return window.open(url, name, "popup,width=500,height=650");
 }
 
@@ -187,7 +196,7 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== origin) return;
       const data = event.data as PopupMessage | undefined;
-      if (!data || data.source !== "grok-auth-popup") return;
+      if (!data || (data.source !== "portfolio-auth-popup" && data.source !== "grok-auth-popup")) return;
       settle(data.token ?? null);
     };
     // Fallback when the user dismisses the popup. Grace period lets the

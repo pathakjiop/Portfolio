@@ -6,14 +6,15 @@ import {
 } from "jose";
 import { env, isWorkspacePreview } from "../env.server.ts";
 
-export const GATE_IDENTITY_HEADER = "x-grok-identity";
+export const GATE_IDENTITY_HEADER = "x-portfolio-identity";
+export const LEGACY_GATE_IDENTITY_HEADER = "x-grok-identity";
 export const GATE_JWKS_PATH = "/__gate/identity-key";
 
 const JWKS_CACHE_TTL_MS = 300_000;
 const PREVIEW_AUDIENCE = "preview";
 export const PREVIEW_GATE_ORIGIN = "http://127.0.0.1:6014";
-const FALLBACK_EMAIL_DOMAIN = "viewer.grok.invalid";
-const FALLBACK_NAME = "Grok user";
+const FALLBACK_EMAIL_DOMAIN = "viewer.portfolio.invalid";
+const FALLBACK_NAME = "Portfolio user";
 
 export type GateIdentity = {
   sub: string;
@@ -32,7 +33,7 @@ export function gateIdentityEnabled(): boolean {
 
 export function gateTokenAudience(): string {
   if (isWorkspacePreview()) return PREVIEW_AUDIENCE;
-  return `app:${env("GROK_PROJECT_ID")}`;
+  return `app:${env("PORTFOLIO_PROJECT_ID") ?? env("GROK_PROJECT_ID")}`;
 }
 
 async function defaultJwksFetch(url: string): Promise<GateJwks | null> {
@@ -149,6 +150,8 @@ export function resolveGateEndpoints(headers: Headers): GateEndpoints | null {
     host.endsWith(".app-builder-testing.com")
   ) {
     issuer = "https://gate.app-builder-testing.com";
+  } else if (host === "portfolio.me" || host.endsWith(".portfolio.me")) {
+    issuer = "https://gate.portfolio.me";
   } else if (host === "grok.me" || host.endsWith(".grok.me")) {
     issuer = "https://gate.grok.me";
   }
@@ -166,7 +169,7 @@ export function sessionBoundToGateIdentity(
 ): boolean {
   return accounts.some(
     (account) =>
-      account.providerId === gateProviderId &&
+      (account.providerId === gateProviderId || account.providerId === "grok-gate") &&
       account.accountId === identitySub,
   );
 }
@@ -176,7 +179,9 @@ export async function gateIdentityFromHeaders(
   jwksFetch?: JwksFetch,
 ): Promise<GateIdentity | null> {
   if (!gateIdentityEnabled()) return null;
-  const token = headers.get(GATE_IDENTITY_HEADER)?.trim();
+  const token = (
+    headers.get(GATE_IDENTITY_HEADER) ?? headers.get(LEGACY_GATE_IDENTITY_HEADER)
+  )?.trim();
   if (!token) return null;
   const endpoints = resolveGateEndpoints(headers);
   if (!endpoints) return null;

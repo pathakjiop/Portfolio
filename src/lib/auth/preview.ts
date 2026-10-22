@@ -20,13 +20,10 @@ export const PREVIEW_CLIENT_ID = "grok_preview";
 export const PREVIEW_CLIENT_SECRET =
   "8bcdb7fc5a33874ad933ca568918d5790388a0795e44c4d1dea691f801b17ec5";
 
-/** The shared auth broker issuer (OIDC discovery lives under it). */
-export const GROK_ISSUER_DEFAULT = "https://auth.grok.me";
+export const PORTFOLIO_ISSUER_DEFAULT = "https://auth.portfolio.me";
+export const GROK_ISSUER_DEFAULT = PORTFOLIO_ISSUER_DEFAULT;
 
 /**
- * Host patterns whose callbacks the preview client accepts. Better Auth derives
- * the live preview's real origin from the request host and validates it against
- * this list (wildcard-matched), so the OAuth `redirect_uri` becomes the concrete
- * `https://<preview-host>/api/auth/oauth2/callback/...` the broker allows.
+ * Host patterns whose callbacks the preview client accepts.
  */
-export const PREVIEW_ALLOWED_HOSTS = ["*.grok-sandbox.com"] as const;
+export const PREVIEW_ALLOWED_HOSTS = ["*.portfolio-sandbox.com", "*.grok-sandbox.com"] as const;

@@ -428,9 +428,9 @@ describe("gateIdentityUserInfo", () => {
       }),
       {
         id: "User-1",
-        email: "user-1@viewer.grok.invalid",
+        email: "user-1@viewer.portfolio.invalid",
         emailVerified: false,
-        name: "Grok user",
+        name: "Portfolio user",
       },
     );
   });
@@ -454,7 +454,7 @@ describe("gateIdentityUserInfo", () => {
 });
 
 describe("sessionBoundToGateIdentity", () => {
-  const provider = "grok-gate";
+  const provider = "portfolio-gate";
 
   it("keeps the session when it is bound to the same gate sub", () => {
     assert.equal(

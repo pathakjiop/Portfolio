@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { getWork, getNextWork, getPrevWork, type Work } from "@/data/content";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { WireLaptop, type LaptopState } from "@/components/WireLaptop";
 import { HERO_POSE, poseAt } from "@/lib/laptop-wire";
@@ -16,6 +16,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileCode2,
+  Maximize2,
+  X,
 } from "lucide-react";
 
 export const Route = createFileRoute("/works/$slug")({
@@ -90,6 +92,8 @@ const isDesktop = () => (typeof window !== "undefined" ? window.matchMedia("(min
 function WorkView({ work }: { work: Work }) {
   const nextWork = getNextWork(work.slug);
   const prevWork = getPrevWork(work.slug);
+
+  const [lightboxImg, setLightboxImg] = useState<{ src: string; title: string } | null>(null);
 
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
@@ -372,11 +376,73 @@ function WorkView({ work }: { work: Work }) {
             </div>
           </div>
 
+          {/* 04 // Visual System Breakdown & Architecture Views */}
+          {work.showcase && work.showcase.length > 0 && (
+            <div className="border-b border-primary/50">
+              <div className="border-b border-primary/50 bg-primary/[0.03] p-6 md:p-10 lg:p-12">
+                <span className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
+                  04 // System Architecture & Visual Breakdown
+                </span>
+                <h2 className="text-2xl font-bold tracking-tight text-primary md:text-4xl">
+                  Architecture in Action
+                </h2>
+                <p className="mt-3 max-w-2xl text-base font-normal leading-relaxed text-primary/80 md:text-lg">
+                  Visual walk-through of the operational pipeline, core algorithmic stages, and execution telemetry. Click any diagram to inspect in full resolution.
+                </p>
+              </div>
+
+              <div className="divide-y divide-primary/50">
+                {work.showcase.map((item, idx) => (
+                  <div key={item.src} className="flex flex-col bg-paper">
+                    {/* Visual Preview Container */}
+                    <div
+                      onClick={() => setLightboxImg({ src: item.src, title: item.title })}
+                      className="group relative cursor-zoom-in overflow-hidden border-b border-primary/40 bg-primary/[0.04] p-4 md:p-8 transition-colors hover:bg-primary/[0.07]"
+                    >
+                      <div className="relative mx-auto overflow-hidden rounded-lg border border-primary/30 shadow-2xl transition-transform duration-500 ease-out group-hover:scale-[1.015]">
+                        <img
+                          src={item.src}
+                          alt={item.title}
+                          loading="lazy"
+                          className="block w-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-primary/0 transition-colors duration-300 group-hover:bg-primary/5 flex items-center justify-center">
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline-flex items-center gap-2 bg-primary/95 text-paper font-mono text-xs px-3.5 py-1.5 rounded-full shadow-lg">
+                            <Maximize2 className="h-3.5 w-3.5" />
+                            <span>Click to enlarge view</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Explanatory Technical Breakdown */}
+                    <div className="p-6 md:p-10 lg:p-12">
+                      <div className="flex flex-wrap items-center gap-2.5 mb-3">
+                        <span className="font-mono text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 border border-primary/50 bg-primary/10 text-primary">
+                          FIGURE 0{idx + 1} // 03
+                        </span>
+                        <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/75">
+                          {item.kicker}
+                        </span>
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-bold tracking-tight text-primary">
+                        {item.title}
+                      </h3>
+                      <p className="mt-4 text-base md:text-lg leading-relaxed text-primary/90 font-normal">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Architecture Matrix */}
           <div className="border-b border-primary/50">
             <div className="border-b border-primary/50 bg-primary/[0.02] p-6 md:p-8">
               <span className="mb-1 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
-                04 // Architecture Stack
+                05 // Architecture Stack
               </span>
               <h2 className="text-2xl font-bold tracking-tight text-primary">System Components</h2>
             </div>
@@ -425,7 +491,7 @@ function WorkView({ work }: { work: Work }) {
           {/* Key Implemented Features */}
           <div className="border-b border-primary/50 p-6 md:p-10 lg:p-12">
             <span className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
-              05 // Capabilities
+              06 // Capabilities
             </span>
             <h2 className="mb-6 text-2xl font-bold tracking-tight text-primary md:text-3xl">Core Implemented Features</h2>
             <ul className="grid grid-cols-1 gap-3.5">
@@ -441,7 +507,7 @@ function WorkView({ work }: { work: Work }) {
           {/* Technical Challenge & Lessons Learned */}
           <div className="border-b border-primary/50 bg-primary/[0.02] p-6 md:p-10 lg:p-12">
             <span className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
-              06 // Technical Challenge & Retrospective
+              07 // Technical Challenge & Retrospective
             </span>
             <h2 className="mb-4 text-2xl font-bold tracking-tight text-primary">Overcoming Bottlenecks</h2>
             <p className="text-base font-normal leading-relaxed text-primary md:text-lg">{work.challenges}</p>
@@ -488,21 +554,37 @@ function WorkView({ work }: { work: Work }) {
 
           {/* gallery (tiles hide themselves if an image is missing) */}
           {gallery.length > 0 && (
-            <div className="flex flex-col gap-px border-b border-primary/40 bg-primary/40">
-              {gallery.map((src) => (
-                <div key={src} className="bg-paper p-4 md:p-6">
-                  <img
-                    src={src}
-                    alt={`${work.shortTitle} preview`}
-                    loading="lazy"
-                    className="block w-full object-cover"
-                    onError={(e) => {
-                      const tile = e.currentTarget.parentElement;
-                      if (tile) tile.style.display = "none";
-                    }}
-                  />
-                </div>
-              ))}
+            <div className="border-b border-primary/40">
+              <div className="border-b border-primary/40 bg-primary/[0.02] p-6 md:p-8">
+                <span className="mb-1 block font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
+                  Project Gallery
+                </span>
+                <h2 className="text-2xl font-bold tracking-tight text-primary">Visual Artifacts & Diagrams</h2>
+              </div>
+              <div className="flex flex-col gap-px bg-primary/40">
+                {gallery.map((src) => (
+                  <div
+                    key={src}
+                    onClick={() => setLightboxImg({ src, title: `${work.shortTitle} Preview` })}
+                    className="group relative cursor-zoom-in bg-paper p-4 md:p-6 transition-colors hover:bg-primary/[0.04]"
+                  >
+                    <img
+                      src={src}
+                      alt={`${work.shortTitle} preview`}
+                      loading="lazy"
+                      className="block w-full object-cover rounded border border-primary/20 transition-transform duration-500 ease-out group-hover:scale-[1.01]"
+                      onError={(e) => {
+                        const tile = e.currentTarget.parentElement;
+                        if (tile) tile.style.display = "none";
+                      }}
+                    />
+                    <div className="absolute right-8 top-8 opacity-0 group-hover:opacity-100 transition-opacity bg-primary/95 text-paper font-mono text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
+                      <Maximize2 className="h-3 w-3" />
+                      <span>Enlarge</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -554,6 +636,45 @@ function WorkView({ work }: { work: Work }) {
           </div>
         </div>
       </div>
+
+      {/* High-Resolution Image Lightbox Modal */}
+      {lightboxImg && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setLightboxImg(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 md:p-8 animate-in fade-in duration-200"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative flex flex-col max-h-[92vh] max-w-6xl w-full bg-paper border border-primary/40 rounded-xl overflow-hidden shadow-2xl"
+          >
+            {/* Lightbox Header */}
+            <div className="flex items-center justify-between border-b border-primary/30 bg-primary/10 px-5 py-3.5">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-primary">
+                {lightboxImg.title}
+              </span>
+              <button
+                type="button"
+                onClick={() => setLightboxImg(null)}
+                className="rounded-full p-1 text-primary hover:bg-primary/20 transition-colors"
+                aria-label="Close image modal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Lightbox Image */}
+            <div className="overflow-auto p-2 md:p-4 bg-black/40 flex items-center justify-center">
+              <img
+                src={lightboxImg.src}
+                alt={lightboxImg.title}
+                className="max-h-[80vh] w-auto object-contain rounded"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

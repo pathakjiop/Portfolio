@@ -8,11 +8,18 @@
  * plant a parent-domain copy that the host-only clear could never expire.
  * Client-safe: no server imports.
  */
-export const GATE_SESSION_MARKER_COOKIE = "__Host-grok_gate_session";
+export const GATE_SESSION_MARKER_COOKIE = "__Host-portfolio_gate_session";
+export const LEGACY_GATE_SESSION_MARKER_COOKIE = "__Host-grok_gate_session";
 
 export function hasGateSessionMarker(): boolean {
   if (typeof document === "undefined") return false;
   return document.cookie
     .split(";")
-    .some((pair) => pair.trim().startsWith(`${GATE_SESSION_MARKER_COOKIE}=`));
+    .some((pair) => {
+      const trimmed = pair.trim();
+      return (
+        trimmed.startsWith(`${GATE_SESSION_MARKER_COOKIE}=`) ||
+        trimmed.startsWith(`${LEGACY_GATE_SESSION_MARKER_COOKIE}=`)
+      );
+    });
 }

@@ -1,8 +1,9 @@
-export function isGrokEmbedderOrigin(origin: string): boolean {
+export function isPortfolioEmbedderOrigin(origin: string): boolean {
   try {
     const url = new URL(origin);
     if (url.protocol !== "https:" && url.protocol !== "http:") return false;
     const host = url.hostname.toLowerCase();
+    if (host === "portfolio.com" || host.endsWith(".portfolio.com")) return true;
     if (host === "grok.com" || host.endsWith(".grok.com")) return true;
     if (host === "localhost" || host === "127.0.0.1" || host === "[::1]") return true;
     return false;
@@ -11,9 +12,11 @@ export function isGrokEmbedderOrigin(origin: string): boolean {
   }
 }
 
+export const isGrokEmbedderOrigin = isPortfolioEmbedderOrigin;
+
 export function isSandboxPreviewGuestHost(hostname: string): boolean {
   const host = hostname.toLowerCase();
-  return host === "grok-sandbox.com" || host.endsWith(".grok-sandbox.com");
+  return host === "grok-sandbox.com" || host.endsWith(".grok-sandbox.com") || host.endsWith(".portfolio-sandbox.com");
 }
 
 function isRemintPreviewPair(guestHost: string, parentHost: string): boolean {

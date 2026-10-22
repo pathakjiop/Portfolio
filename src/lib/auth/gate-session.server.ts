@@ -15,8 +15,9 @@ import {
 } from "./gate-identity.server";
 import { GATE_SESSION_MARKER_COOKIE } from "./gate-session-marker";
 
-export const GATE_PROVIDER_ID = "grok-gate";
-const GATE_ACCOUNT_ISSUER = "https://grok.com";
+export const GATE_PROVIDER_ID = "portfolio-gate";
+export const LEGACY_GATE_PROVIDER_ID = "grok-gate";
+const GATE_ACCOUNT_ISSUER = "https://portfolio.me";
 const LOG = "[gate-identity]";
 
 type GateAccount = Parameters<typeof handleOAuthUserInfo>[1]["account"];

@@ -18,7 +18,8 @@ import {
 assertAppDataServerOnly("app-data/client.server");
 
 export const CONNECTORS_HOST_STAGING = "connectors.app-builder-testing.com";
-export const CONNECTORS_HOST_PROD = "connectors.grok.me";
+export const CONNECTORS_HOST_PROD = "connectors.portfolio.me";
+export const LEGACY_CONNECTORS_HOST_PROD = "connectors.grok.me";
 
 function isLoopbackHost(host: string): boolean {
   return host === "localhost" || host === "127.0.0.1" || host === "[::1]";
@@ -31,7 +32,7 @@ type InboundContext = {
 };
 
 function connectorsBaseFor(publicHost: string | null): string | null {
-  const explicit = env("GROK_CONNECTORS_URL");
+  const explicit = env("PORTFOLIO_CONNECTORS_URL") ?? env("GROK_CONNECTORS_URL");
   if (explicit) return explicit.replace(/\/+$/, "");
 
   const host = publicHost?.toLowerCase();
@@ -42,7 +43,12 @@ function connectorsBaseFor(publicHost: string | null): string | null {
   ) {
     return `https://${CONNECTORS_HOST_STAGING}`;
   }
-  if (host === "grok.me" || host.endsWith(".grok.me")) {
+  if (
+    host === "portfolio.me" ||
+    host.endsWith(".portfolio.me") ||
+    host === "grok.me" ||
+    host.endsWith(".grok.me")
+  ) {
     return `https://${CONNECTORS_HOST_PROD}`;
   }
   return null;

@@ -1,6 +1,5 @@
 /**
- * Mount once in `__root.tsx` so the Grok preview chrome can drive navigation
- * (and later receive registered routes). Noops when the app is not embedded.
+ * Optional preview host bridge component for iframe embedded scenarios.
  */
 
 import { useEffect } from "react";

@@ -1,5 +1,12 @@
 export type WorkLink = { label: string; meta: string; href: string };
 
+export type WorkShowcaseItem = {
+  src: string;
+  kicker: string;
+  title: string;
+  description: string;
+};
+
 export type WorkArchitecture = {
   frontend?: string;
   backend?: string;
@@ -29,6 +36,7 @@ export type Work = {
   note?: string;
   cover: string;
   gallery: string[];
+  showcase?: WorkShowcaseItem[];
   links: WorkLink[];
   featured?: boolean;
 };
@@ -193,7 +201,32 @@ export const works: Work[] = [
     ],
     challenges: "Clinical patient notes feature complex medical abbreviations, misspellings, and discontinuous symptom mentions. Mapping exact character offsets from subword transformer tokens back to raw character slices required a custom offset indexer to prevent prediction drift.",
     cover: "/media/mednote-cover.jpg",
-    gallery: ["/media/mednote-cover.jpg"],
+    gallery: [
+      "/media/mednote-cover.jpg",
+      "/media/projects/mednote-1.webp",
+      "/media/projects/mednote-2.webp",
+      "/media/projects/mednote-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/mednote-1.webp",
+            "kicker": "CLINICAL SPAN ANNOTATOR",
+            "title": "Exact Character Offset Extraction & Highlight Inspector",
+            "description": "Interactive clinical annotation workspace displaying patient note free-text with real-time character-level offset boundaries [start, end]. Color-coded highlights isolate clinical entities (palpitations, substernal chest pressure, exertional dyspnea, family MI history) mapped directly against standardized NBME rubric concepts."
+      },
+      {
+            "src": "/media/projects/mednote-2.webp",
+            "kicker": "MULTI-MODEL INFERENCE PIPELINE",
+            "title": "Ensemble Architecture: Lexicon Matcher, N-Gram & PyTorch BIO Transformer",
+            "description": "End-to-end inference ensemble fusing an Exact Lexicon Matcher with strict boundary enforcement, a Character N-Gram Logistic Regression classifier for irregular typos, and a deep PyTorch BIO sequence Transformer (PubMedBERT). An arbitration decoder merges candidate probabilities into contiguous and discontinuous span offsets."
+      },
+      {
+            "src": "/media/projects/mednote-3.webp",
+            "kicker": "BENCHMARK PLATFORM",
+            "title": "Kaggle Benchmark Evaluation & Validation Micro-F1 Analytics",
+            "description": "Comprehensive model evaluation dashboard displaying test set character-level Micro-F1 scores (0.893 test score), precision-recall curves, and cross-entropy loss trajectories across DistilBERT, PubMedBERT, and the final ensemble checkpoint."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/MedNoteClassifier" },
       { label: "KAGGLE DATASET", meta: "NBME Score Clinical", href: "https://www.kaggle.com/c/nbme-score-clinical-patient-notes" },
@@ -236,7 +269,32 @@ export const works: Work[] = [
     challenges: "Metallic blister packs cause severe specular glare, breaking conventional OCR. We implemented localized contrast-stretching filters and multi-angle token pooling to preserve legible character segments across reflections.",
     safetyNote: "MediShot is an educational aid. It does not prescribe dosage or provide clinical diagnosis. Users are prompted to verify package labels directly with certified pharmacists.",
     cover: "/media/medishot-cover.jpg",
-    gallery: ["/media/medishot-cover.jpg"],
+    gallery: [
+      "/media/medishot-cover.jpg",
+      "/media/projects/medishot-1.webp",
+      "/media/projects/medishot-2.webp",
+      "/media/projects/medishot-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/medishot-1.webp",
+            "kicker": "IMAGE ENHANCEMENT ENGINE",
+            "title": "Computer Vision Preprocessing & Blister Pack Glare Suppression",
+            "description": "Multi-stage OpenCV preprocessing pipeline designed specifically for crumpled metallic blister packs. Utilizes Contrast-Limited Adaptive Histogram Equalization (CLAHE), bilateral filtering, and adaptive Gaussian binarization to suppress specular light reflections before feeding text segments into OCR engines."
+      },
+      {
+            "src": "/media/projects/medishot-2.webp",
+            "kicker": "PHARMA ENTITY GRAPH",
+            "title": "Pharmaceutical Entity Parsing & Active Salt Extraction",
+            "description": "Entity extraction pipeline separating commercial brand trade names (Augmentin 625 Duo) from active pharmaceutical ingredients (Amoxicillin 500mg + Potassium Clavulanate 125mg). Cross-references extracted formulations against verified national drug compendiums and normalizes dosage units."
+      },
+      {
+            "src": "/media/projects/medishot-3.webp",
+            "kicker": "SAFETY & COMPLIANCE GUARDRAIL",
+            "title": "Uncertainty-Aware Guardrails & Pharmacist Audit View",
+            "description": "Zero-hallucination safety interface displaying side-by-side verification between the raw camera crop and extracted text tokens. Characters falling below the 85% confidence threshold are explicitly flagged with warning badges rather than guessed, prompting pharmacist verification."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/medishot" },
       { label: "RESEARCH LOG", meta: "Build Log", href: "#" },
@@ -279,7 +337,32 @@ export const works: Work[] = [
     challenges: "Balancing agent autonomy with strict safety. Requiring manual confirmation for every single mouse click destroys usability, so we designed a risk-scoring heuristic that auto-approves safe read operations while locking destructive write/network calls.",
     safetyNote: "ARGUS is designed to demonstrate safe agent orchestration patterns. Production deployment requires careful configuration of OS-level sandbox boundaries.",
     cover: "/media/argus-cover.jpg",
-    gallery: ["/media/argus-cover.jpg"],
+    gallery: [
+      "/media/argus-cover.jpg",
+      "/media/projects/argus-1.webp",
+      "/media/projects/argus-2.webp",
+      "/media/projects/argus-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/argus-1.webp",
+            "kicker": "POLICY INTERCEPTOR",
+            "title": "Structured Action Plan Interceptor & Risk Classification Engine",
+            "description": "Gateway proxy validating incoming LLM agent JSON plans against strict schema allowlists. Classifies system operations into deterministic risk tiers: auto-permitting read-only commands while immediately quarantining critical filesystem deletions, shell executions, and privilege escalations."
+      },
+      {
+            "src": "/media/projects/argus-2.webp",
+            "kicker": "OBSERVABILITY CONSOLE",
+            "title": "Real-Time Telemetry Stream & Desktop Action Audit Log",
+            "description": "Developer observability dashboard broadcasting token-authenticated WebSocket telemetry at 0.4ms latency. Captures HMAC-SHA256 signed execution traces, child process IDs, and memory utilization in an append-only, tamper-evident local SQLite audit ledger."
+      },
+      {
+            "src": "/media/projects/argus-3.webp",
+            "kicker": "SAFETY & BLAST RADIUS",
+            "title": "Dry-Run Simulation Sandbox & Emergency Kill Switch",
+            "description": "Virtual overlay simulation engine predicting filesystem mutations and blast radius before physical execution occurs. Features an instant, deterministic emergency kill switch that halts all spawned child processes in under 0.1ms."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/argus" },
       { label: "SECURITY SPECS", meta: "Threat Model", href: "#" },
@@ -321,7 +404,32 @@ export const works: Work[] = [
     ],
     challenges: "Bridging synchronous Minecraft game ticks (20 TPS) with asynchronous external LLM API latencies. We implemented an asynchronous event queue in Java that queues player requests without freezing the server main thread.",
     cover: "/media/minecraft_office.webp",
-    gallery: ["/media/minecraft_office.webp"],
+    gallery: [
+      "/media/minecraft_office.webp",
+      "/media/projects/minecraft-office-1.webp",
+      "/media/projects/minecraft-office-2.webp",
+      "/media/projects/minecraft-office-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/minecraft-office-1.webp",
+            "kicker": "EMBODIED MULTI-AGENT SWARM",
+            "title": "3D Virtual Workspace & Autonomous Collaborative NPCs",
+            "description": "Simulated 3D virtual office space inside a PaperMC Minecraft server where autonomous Claude 3.5 Sonnet agents have embodied NPC avatars. Agents gather around meeting tables, assign Jira tickets, and deliberate software implementations via spatial proximity chat."
+      },
+      {
+            "src": "/media/projects/minecraft-office-2.webp",
+            "kicker": "SYSTEM ARCHITECTURE",
+            "title": "PaperMC Java 21 Event Bridge & Tick-Decoupled Pipeline",
+            "description": "Asynchronous threading bridge decoupling Minecraft's strict 20 TPS game loop from external LLM network latency (1-3s). Uses background worker pools and an Orion message broker so that game server ticks remain locked at 20.0 TPS with zero player lag."
+      },
+      {
+            "src": "/media/projects/minecraft-office-3.webp",
+            "kicker": "ACTION EXECUTION BRIDGE",
+            "title": "In-Game CI/CD Triggers & GitHub Repository Integration",
+            "description": "Real-world development integration where agent consensus in virtual conference rooms triggers external webhooks to GitHub. Agents generate code diffs, run test suites, and open verified GitHub Pull Requests autonomously."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/minecraft-office" },
       { label: "DEMO OVERVIEW", meta: "Video Demo", href: "#" },
@@ -364,7 +472,32 @@ export const works: Work[] = [
     challenges: "The target government portal frequently dropped connections and returned HTTP 503 errors during heavy traffic. I redesigned the scraping architecture from synchronous execution to an event-driven queue with dead-letter exchanges and rate-limiting delays.",
     safetyNote: "Engineered under corporate internship guidelines at Pureframe Labs Pvt. Ltd. Code references respect confidential company parameters and compliance rules.",
     cover: "/media/servicebot-cover.jpg",
-    gallery: ["/media/servicebot-cover.jpg"],
+    gallery: [
+      "/media/servicebot-cover.jpg",
+      "/media/projects/servicebot-1.webp",
+      "/media/projects/servicebot-2.webp",
+      "/media/projects/servicebot-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/servicebot-1.webp",
+            "kicker": "AUTOMATION ENGINE",
+            "title": "Distributed RabbitMQ Queue & Worker Architecture",
+            "description": "Scalable worker architecture utilizing RabbitMQ message brokers, durable task exchanges, and dead-letter queues. Batches incoming requests across a pool of 16 concurrent headless Playwright instances with idempotent processing guarantees."
+      },
+      {
+            "src": "/media/projects/servicebot-2.webp",
+            "kicker": "SCRAPER PIPELINE",
+            "title": "Headless Playwright Automation & PDF Extraction",
+            "description": "Multi-stage headless crawler navigating legacy state government land record portals. Automatically cascades dynamic dropdown selects, resolves verification captchas in 42ms, bypasses transient HTTP 503 errors with exponential backoff, and validates PDF checksums."
+      },
+      {
+            "src": "/media/projects/servicebot-3.webp",
+            "kicker": "PRODUCTION METRICS",
+            "title": "Production Operations Dashboard & WhatsApp Webhook Delivery",
+            "description": "Telemetry dashboard tracking 25,480 official land records processed during the Pureframe Labs internship with a 99.82% retrieval success rate. Completed documents are dispatched automatically to citizens via WhatsApp Business API webhooks within seconds."
+      }
+],
     links: [
       { label: "INTERNSHIP SUMMARY", meta: "Pureframe Labs", href: "https://www.linkedin.com/in/pathak-ji-op/" },
     ],
@@ -405,7 +538,32 @@ export const works: Work[] = [
     ],
     challenges: "Parsing and rendering recursive dependency graphs without cycles or stack overflows required implementing a directed acyclic graph (DAG) visitor with cycle detection in Rust.",
     cover: "/media/pkgman-cover.jpg",
-    gallery: ["/media/pkgman-cover.jpg"],
+    gallery: [
+      "/media/pkgman-cover.jpg",
+      "/media/projects/pkgman-1.webp",
+      "/media/projects/pkgman-2.webp",
+      "/media/projects/pkgman-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/pkgman-1.webp",
+            "kicker": "TERMINAL USER INTERFACE",
+            "title": "Ratatui Terminal UI & Blazing-Fast Fuzzy Search",
+            "description": "Keyboard-driven terminal interface engineered with Rust and Ratatui. Features instantaneous fuzzy searching across 14,000+ local and sync packages in 4.2ms, split-screen metadata inspection, and vim-style navigation keybindings."
+      },
+      {
+            "src": "/media/projects/pkgman-2.webp",
+            "kicker": "DEPENDENCY RESOLUTION",
+            "title": "Interactive Pactree Dependency DAG Graph Visualizer",
+            "description": "Visual dependency tree explorer rendering hierarchical upstream and downstream package relationships with cycle detection in Rust. Traverses direct dependencies, optional flags, and transitive library constraints in under 2ms."
+      },
+      {
+            "src": "/media/projects/pkgman-3.webp",
+            "kicker": "SYSTEMS ARCHITECTURE",
+            "title": "Asynchronous Tokio Runtime & AUR RPC API Bridge",
+            "description": "Multi-threaded systems architecture isolating terminal 60 FPS crossterm rendering from background network threads querying the Arch User Repository (AUR) RPC API and reading local memory-mapped ALPM sync databases."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/pkgman" },
       { label: "CRATES / CODE", meta: "Source Code", href: "#" },
@@ -446,7 +604,32 @@ export const works: Work[] = [
     ],
     challenges: "Ensuring server-side message purge accuracy regardless of whether client browsers remain connected or disconnect unexpectedly. We shifted timer enforcement to PostgreSQL database triggers rather than relying on client timers.",
     cover: "/media/noir-cover.jpg",
-    gallery: ["/media/noir-cover.jpg"],
+    gallery: [
+      "/media/noir-cover.jpg",
+      "/media/projects/noir-1.webp",
+      "/media/projects/noir-2.webp",
+      "/media/projects/noir-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/noir-1.webp",
+            "kicker": "PRIVATE MESSAGING UI",
+            "title": "Cyber-Noir Ephemeral Messaging & Disposable Rooms",
+            "description": "Minimalist temporary messaging interface designed for sensitive discussions. Supports instant secret room creation with shareable disposable tokens, sender anonymity, and countdown timers rendered directly on each chat bubble."
+      },
+      {
+            "src": "/media/projects/noir-2.webp",
+            "kicker": "EPHEMERAL PROTOCOL",
+            "title": "Self-Destruct Timer Matrix & Granular Retention Controls",
+            "description": "Configurable Time-to-Live (TTL) intervals ranging from 10 seconds (instant burn) up to 24 hours. Messages self-destruct upon reading with client-side particle dissolution cues and guaranteed server memory pruning."
+      },
+      {
+            "src": "/media/projects/noir-3.webp",
+            "kicker": "DATABASE ARCHITECTURE",
+            "title": "Zero-Retention Supabase PostgreSQL Database Purge Engine",
+            "description": "Database-level retention guarantee using PostgreSQL pg_cron triggers executing automatic hard row deletions where expires_at <= NOW(). Ensures zero data residue survives server restarts or client disconnections."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/noir-chat" },
       { label: "LIVE DEMO", meta: "Test App", href: "#" },
@@ -487,7 +670,32 @@ export const works: Work[] = [
     ],
     challenges: "Modeling complex booking workflows where quotation negotiation involves multi-round adjustments before contract confirmation. We implemented a state machine in PostgreSQL with distinct transaction states.",
     cover: "/media/artistly-cover.jpg",
-    gallery: ["/media/artistly-cover.jpg"],
+    gallery: [
+      "/media/artistly-cover.jpg",
+      "/media/projects/artistly-1.webp",
+      "/media/projects/artistly-2.webp",
+      "/media/projects/artistly-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/artistly-1.webp",
+            "kicker": "MARKETPLACE DISCOVERY",
+            "title": "Talent Discovery Marketplace & Performing Artist Profiles",
+            "description": "Curated talent discovery platform connecting Indian performing artists (musicians, comedians, dancers) with event organizers. Features rich portfolio showcases, verified client reviews, audio/video reel integration, and multi-city filters."
+      },
+      {
+            "src": "/media/projects/artistly-2.webp",
+            "kicker": "TRANSACTION STATE MACHINE",
+            "title": "Dynamic Multi-Stage Quotation & Booking State Machine",
+            "description": "End-to-end booking state machine tracking inquiries through quotation negotiation, equipment rider adjustments, milestone escrow payments, and final contract completion."
+      },
+      {
+            "src": "/media/projects/artistly-3.webp",
+            "kicker": "ACCESS CONTROL ARCHITECTURE",
+            "title": "Role-Based Access Control (RBAC) Management Console",
+            "description": "Segmented portal architecture with JWT role authorization separating Artist management views (gig calendar, quote builder), Client organizer workflows (quote comparisons, messaging), and Admin platform oversight."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/artistly" },
       { label: "LIVE DEMO", meta: "Platform Preview", href: "#" },
@@ -528,7 +736,32 @@ export const works: Work[] = [
     ],
     challenges: "Consolidating divergent herbal nomenclature across multiple Indian regional languages into standardized botanical entries with clear source verification.",
     cover: "/media/ayurvedic-cover.jpg",
-    gallery: ["/media/ayurvedic-cover.jpg"],
+    gallery: [
+      "/media/ayurvedic-cover.jpg",
+      "/media/projects/ayurvedic-1.webp",
+      "/media/projects/ayurvedic-2.webp",
+      "/media/projects/ayurvedic-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/ayurvedic-1.webp",
+            "kicker": "BOTANICAL KNOWLEDGE BASE",
+            "title": "Botanical Encyclopedia & Medicinal Plant Repository",
+            "description": "Digital botanical repository developed for the Google Solution Challenge. Organizes traditional Ayurvedic medicinal herbs with standard botanical binomial taxonomy, Sanskrit vernacular terms, and multi-lingual search."
+      },
+      {
+            "src": "/media/projects/ayurvedic-2.webp",
+            "kicker": "PHARMACOGNOSY ENGINE",
+            "title": "Phytochemical Profiling & Modern Pharmacological Matrix",
+            "description": "Detailed phytochemical constituent breakdown mapping classical Ayurvedic properties (Rasa, Guna, Virya, Vipaka) directly to modern bioactives (Withanolides, Eugenol, Curcumin) and their physiological mechanisms."
+      },
+      {
+            "src": "/media/projects/ayurvedic-3.webp",
+            "kicker": "EVIDENCE VERIFICATION",
+            "title": "Therapeutic Wellness Explorer & Sourced Claim Verification",
+            "description": "Transparent wellness categorization engine linking traditional indications with peer-reviewed clinical studies. Distinguishes classical manuscript claims from randomized controlled trial evidence."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/ayurvedic-system" },
     ],
@@ -569,7 +802,32 @@ export const works: Work[] = [
     ],
     challenges: "Integrating with local Ollama daemon endpoints while managing inference latency on consumer hardware. We implemented structured input sanitization and prompt template wrapping to ensure Mistral 7B consistently returns concise, ready-to-use prompt definitions.",
     cover: "/media/prompt-ai-cover.jpg",
-    gallery: ["/media/prompt-ai-cover.jpg", "/media/prompt-ai-cover.png"],
+    gallery: [
+      "/media/prompt-ai-cover.jpg",
+      "/media/projects/prompt-ai-1.webp",
+      "/media/projects/prompt-ai-2.webp",
+      "/media/projects/prompt-ai-3.webp"
+],
+    showcase: [
+      {
+            "src": "/media/projects/prompt-ai-1.webp",
+            "kicker": "PROMPT ENGINEERING STUDIO",
+            "title": "Structured System Prompt Decomposition Studio",
+            "description": "Interactive React prompt engineering studio breaking down complex instructions into foundational dimensions: Persona Role, Domain Context, Core Action Directives, and Output Constraints with real-time token count previews."
+      },
+      {
+            "src": "/media/projects/prompt-ai-2.webp",
+            "kicker": "INFERENCE PIPELINE",
+            "title": "Local Ollama & Mistral 7B Private Inference Gateway",
+            "description": "Full-stack inference architecture routing requests from an Express.js MVC backend to a locally hosted Ollama runtime executing quantized Mistral 7B weights, achieving zero API token cost and complete data privacy."
+      },
+      {
+            "src": "/media/projects/prompt-ai-3.webp",
+            "kicker": "BENCHMARKING & EXPORT",
+            "title": "Prompt Evaluation, Token Efficiency & Export Studio",
+            "description": "Comprehensive developer studio analyzing prompt token efficiency, latency metrics, and formatting compatibility across Mistral 7B, Llama 3, and Claude models with instant JSON and clipboard export."
+      }
+],
     links: [
       { label: "GITHUB REPO", meta: "View Repository", href: "https://github.com/pathakjiop/Prompt-AI" },
     ],

@@ -6,7 +6,10 @@ import {
   readinessProbeDelayMs,
   readinessProbeExhausted,
 } from "./readiness-schedule.ts";
-import { CONNECTOR_TOKEN_READY_EVENT } from "./types.ts";
+import {
+  CONNECTOR_TOKEN_READY_EVENT,
+  LEGACY_CONNECTOR_TOKEN_READY_EVENT,
+} from "./types.ts";
 
 export type ConnectorWaitStatus =
   | "idle"
@@ -39,7 +42,7 @@ async function isConnectorReady(): Promise<boolean> {
  * While `waiting` is true (a connector call returned `pending`), probes the
  * server for the connector token and calls `refetch` once it is present. The
  * probe is a header check on the app's own server — it never reaches the gate.
- * A `connector-token-ready` bridge event from the Grok preview chrome triggers
+ * A `connector-token-ready` bridge event triggers
  * `refetch` immediately. A top-level page (download/export, local dev, the
  * sandbox's own `npm run preview`) is not framed by any preview, so no token
  * can ever arrive: the hook reports `not_embedded` without probing. Any framed
@@ -104,12 +107,14 @@ export function useRefetchWhenConnectorReady(
     }, READINESS_PROBE_MAX_TOTAL_MS);
 
     window.addEventListener(CONNECTOR_TOKEN_READY_EVENT, onTokenReady);
+    window.addEventListener(LEGACY_CONNECTOR_TOKEN_READY_EVENT, onTokenReady);
     schedule();
     return () => {
       cancelled = true;
       clearTimeout(deadline);
       if (timer !== undefined) clearTimeout(timer);
       window.removeEventListener(CONNECTOR_TOKEN_READY_EVENT, onTokenReady);
+      window.removeEventListener(LEGACY_CONNECTOR_TOKEN_READY_EVENT, onTokenReady);
       setTimedOut(false);
     };
   }, [waiting]);

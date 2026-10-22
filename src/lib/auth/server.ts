@@ -57,11 +57,13 @@ void ensureDbReady();
  * restart clears both the secret and PGLite together.
  */
 const globalAuthRef = globalThis as typeof globalThis & {
+  __portfolioAuthPreviewSecret__?: string;
   __grokAuthPreviewSecret__?: string;
 };
 function previewAuthSecret(): string {
-  globalAuthRef.__grokAuthPreviewSecret__ ??= randomBytes(32).toString("hex");
-  return globalAuthRef.__grokAuthPreviewSecret__;
+  globalAuthRef.__portfolioAuthPreviewSecret__ ??=
+    globalAuthRef.__grokAuthPreviewSecret__ ?? randomBytes(32).toString("hex");
+  return globalAuthRef.__portfolioAuthPreviewSecret__;
 }
 
 /** Read an env var, treating empty/whitespace as unset. */
@@ -77,13 +79,16 @@ const authDisabled = env("VITE_AUTH_ENABLED") === "false";
 // Broker federation creds: the deployer injects a per-app client when deployed;
 // otherwise fall back to the shared live-preview client, which the broker accepts
 // for any `*.grok-sandbox.com` callback (see `./preview`).
-const grokIssuer = env("GROK_AUTH_ISSUER") ?? GROK_ISSUER_DEFAULT;
-const grokClientId = env("GROK_AUTH_CLIENT_ID") ?? PREVIEW_CLIENT_ID;
-const grokClientSecret = env("GROK_AUTH_CLIENT_SECRET") ?? PREVIEW_CLIENT_SECRET;
+const portfolioIssuer =
+  env("PORTFOLIO_AUTH_ISSUER") ?? env("GROK_AUTH_ISSUER") ?? GROK_ISSUER_DEFAULT;
+const portfolioClientId =
+  env("PORTFOLIO_AUTH_CLIENT_ID") ?? env("GROK_AUTH_CLIENT_ID") ?? PREVIEW_CLIENT_ID;
+const portfolioClientSecret =
+  env("PORTFOLIO_AUTH_CLIENT_SECRET") ?? env("GROK_AUTH_CLIENT_SECRET") ?? PREVIEW_CLIENT_SECRET;
 
 /** True when federated sign-in is active (real auth is enforced). */
 export const authConfigured =
-  !authDisabled && Boolean(grokClientId && grokClientSecret);
+  !authDisabled && Boolean(portfolioClientId && portfolioClientSecret);
 
 // This app's own Better Auth origin. When deployed the deployer injects the
 // public URL. In the sandbox live preview there's no fixed URL (each preview gets
@@ -131,10 +136,10 @@ const databaseUrl = env("DATABASE_URL");
 // Discovery would cost an extra network hop to the broker before the popup can
 // even redirect to Google/X — the live-preview popup felt stuck on the app for
 // that whole round-trip. These paths match the broker's discovery document.
-const issuerBase = grokIssuer.replace(/\/+$/, "");
-const grokAuthorizationUrl = `${issuerBase}/api/auth/oauth2/authorize`;
-const grokTokenUrl = `${issuerBase}/api/auth/oauth2/token`;
-const grokUserInfoUrl = `${issuerBase}/api/auth/oauth2/userinfo`;
+const issuerBase = portfolioIssuer.replace(/\/+$/, "");
+const portfolioAuthorizationUrl = `${issuerBase}/api/auth/oauth2/authorize`;
+const portfolioTokenUrl = `${issuerBase}/api/auth/oauth2/token`;
+const portfolioUserInfoUrl = `${issuerBase}/api/auth/oauth2/userinfo`;
 
 // Real Postgres when `DATABASE_URL` is set (deployed apps), else the app's
 // embedded PGLite (preview) via a Kysely dialect — so Better Auth persists to the
@@ -146,21 +151,21 @@ const database = databaseUrl
   : { dialect: pgliteDialect(() => getPglite()), type: "postgres" as const };
 
 /** Session token cookie name — also read by the live-preview popup completion page. */
-export const SESSION_TOKEN_COOKIE = "__Host-grok-auth.session_token";
+export const SESSION_TOKEN_COOKIE = "__Host-portfolio-auth.session_token";
 
 // Built separately so the `betterAuth({...})` call stays easy to edit without
 // breaking brackets (models often trip on the conditional plugin spread).
-const grokOAuthPlugin = authConfigured
+const portfolioOAuthPlugin = authConfigured
   ? genericOAuth({
       config: GROK_PROVIDERS.map(({ providerId, idp }) => ({
         providerId,
-        clientId: grokClientId as string,
-        clientSecret: grokClientSecret as string,
+        clientId: portfolioClientId as string,
+        clientSecret: portfolioClientSecret as string,
         // Prefer static endpoints over `discoveryUrl` so initiating (and
         // completing) OAuth does not wait on a broker discovery fetch.
-        authorizationUrl: grokAuthorizationUrl,
-        tokenUrl: grokTokenUrl,
-        userInfoUrl: grokUserInfoUrl,
+        authorizationUrl: portfolioAuthorizationUrl,
+        tokenUrl: portfolioTokenUrl,
+        userInfoUrl: portfolioUserInfoUrl,
         scopes: ["openid", "profile", "email"],
         // `prompt: "login"` forces the broker to re-authenticate against the
         // upstream on every sign-in instead of silently reusing an existing
@@ -225,18 +230,17 @@ export const auth = betterAuth({
     defaultCookieAttributes: { secure: true, sameSite: "lax", path: "/" },
     cookies: {
       session_token: { name: SESSION_TOKEN_COOKIE },
-      session_data: { name: "__Host-grok-auth.session_data" },
-      account_data: { name: "__Host-grok-auth.account_data" },
-      dont_remember: { name: "__Host-grok-auth.dont_remember" },
+      session_data: { name: "__Host-portfolio-auth.session_data" },
+      account_data: { name: "__Host-portfolio-auth.account_data" },
+      dont_remember: { name: "__Host-portfolio-auth.dont_remember" },
     },
   },
 
   plugins: [
     gateIdentitySessions(),
 
-    // One genericOAuth provider per upstream (when auth is on), all federating
-    // to the broker with the SAME client and differing only by the `idp` hint.
-    ...(grokOAuthPlugin ? [grokOAuthPlugin] : []),
+    // One genericOAuth provider per upstream (when auth is on)
+    ...(portfolioOAuthPlugin ? [portfolioOAuthPlugin] : []),
 
     // Accept `Authorization: Bearer <session-token>` as an alternative to the
     // cookie. Needed for the LIVE PREVIEW: the app runs in an embedded iframe
