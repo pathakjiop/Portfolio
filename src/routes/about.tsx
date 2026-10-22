@@ -691,12 +691,14 @@ function About() {
             ref={heroWrapperRef}
             className="md:col-span-4 relative min-h-[340px] md:min-h-[460px] lg:min-h-[500px] flex items-end justify-center bg-primary/[0.015]"
           >
-            <img
-              ref={heroImgRef}
-              src={IMG_HERO}
-              alt="Atharv Pathak sitting on the line"
-              className="absolute bottom-0.5 right-[-8px] sm:right-[-12px] md:right-[-18px] lg:right-[-24px] xl:right-[-32px] translate-y-[31.5%] h-[520px] sm:h-[600px] md:h-[730px] lg:h-[840px] xl:h-[920px] w-auto max-w-none object-contain pointer-events-none select-none z-30 sit-shadow will-change-transform"
-            />
+            <div className="absolute bottom-0.5 right-[-8px] sm:right-[-12px] md:right-[-18px] lg:right-[-24px] xl:right-[-32px] translate-y-[31.5%] pointer-events-none select-none z-30">
+              <img
+                ref={heroImgRef}
+                src={IMG_HERO}
+                alt="Atharv Pathak sitting on the line"
+                className="h-[520px] sm:h-[600px] md:h-[730px] lg:h-[840px] xl:h-[920px] w-auto max-w-none object-contain sit-shadow will-change-transform"
+              />
+            </div>
           </div>
         </div>
       </section>
