@@ -7,6 +7,7 @@ import appCss from "../styles.css?url";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { Toaster } from "react-hot-toast";
 import { AnimatePresence, motion } from "framer-motion";
+import { Analytics } from "@vercel/analytics/react";
 
 
 
@@ -51,6 +52,7 @@ export const Route = createRootRoute({
           </SmoothScroll>
         </AuthProvider>
         <Toaster position="bottom-right" />
+        <Analytics />
         <Scripts />
       </body>
     </html>
