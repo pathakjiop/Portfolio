@@ -1058,15 +1058,6 @@ function About() {
             <p className="text-xs font-mono opacity-70 leading-relaxed mb-6">
               Strengthening software engineering fundamentals, systems architecture, and mathematical foundations.
             </p>
-
-            <div className="border border-primary/30 p-4 bg-primary/5">
-              <div className="flex items-center gap-2 mb-2">
-                <GraduationCap className="h-4 w-4 opacity-75" />
-                <span className="text-[0.7rem] font-mono font-bold uppercase">Degree Target</span>
-              </div>
-              <p className="text-sm font-bold">B.E. Information Technology</p>
-              <p className="text-[0.68rem] font-mono opacity-70 mt-1">Expected Graduation: May 2027</p>
-            </div>
           </div>
 
           <div className="md:col-span-8 divide-y divide-primary/50">
