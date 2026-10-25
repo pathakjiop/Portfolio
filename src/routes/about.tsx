@@ -204,11 +204,11 @@ const leadershipList = [
       "Led an engineering team building an accessible digital platform to organize and present Ayurvedic health information with React and Python.",
   },
   {
-    role: "Technical Workshop Coordinator",
-    initiative: "Student Developer Community",
-    project: "AI / ML & Android Development",
+    role: "Technical Workshop Lead",
+    initiative: "Student Community",
+    project: "AI/ML & AI-Driven Development",
     description:
-      "Coordinated hands-on student workshops introducing foundational machine learning concepts and mobile development practices to peers.",
+      "Conducted a hands-on workshop for 70+ students covering core AI/ML concepts and future-ready AI-driven software development practices.",
   },
   {
     role: "Java Module Mentor",
