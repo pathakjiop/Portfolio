@@ -993,12 +993,7 @@ function About() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <p
-                ref={reliableCaptionRef}
-                className="text-[0.52rem] font-mono tracking-widest uppercase opacity-45 mt-2"
-              >
-                ENGINEERING FINAL YEAR PROJECT LEAD
-              </p>
+
             </div>
           </div>
         </div>
