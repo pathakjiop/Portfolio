@@ -29,7 +29,7 @@ export const media = {
   // About
   aboutVideo: "/media/DSCF0725_converted-1.webp",
   aboutPortrait: "/media/main.jpg",
-  aboutExperienceStill: "/media/still-08.webp",
+  aboutExperienceStill: "/media/still-08.jpg",
 
   // Works
   worksSquare: "/media/project_cover.jpg",
