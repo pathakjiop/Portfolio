@@ -178,7 +178,7 @@ const toolkitCategories = [
 
 const experienceList = [
   {
-    when: "1 May 2026 – 26 June 2026",
+    when: "1 Jan 2026 – 30 June 2026",
     role: "Software Developer Intern",
     company: "Pureframe Labs Pvt. Ltd.",
     type: "Internship",
